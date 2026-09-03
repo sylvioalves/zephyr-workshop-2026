@@ -1,0 +1,15 @@
+sample:
+  name: lab5 shell
+  description: Custom shell command that reads the die temperature on demand
+common:
+  tags: workshop
+  integration_platforms:
+    - native_sim
+tests:
+  workshop.lab5.shell:
+    # The application prints nothing at boot: its only output comes from the
+    # "temp" command typed into the shell. Driving that needs the pytest shell
+    # harness, so this case guards the build only.
+    build_only: true
+    platform_allow:
+      - native_sim

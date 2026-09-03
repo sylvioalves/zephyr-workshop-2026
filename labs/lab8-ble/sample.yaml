@@ -1,0 +1,10 @@
+sample:
+  name: lab8 ble temperature broadcast
+  description: Advertise the SoC die temperature as BLE manufacturer data
+common:
+  tags: workshop
+  build_only: true
+tests:
+  workshop.lab8.ble:
+    platform_allow:
+      - esp32c5_devkitc/esp32c5/hpcore

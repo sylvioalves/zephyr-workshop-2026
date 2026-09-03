@@ -1,0 +1,6 @@
+# Torna este repositorio um modulo Zephyr, para que ele possa ser adicionado a
+# um west.yml sem precisar de um repositorio separado so para o ota_http.
+name: ota_http
+build:
+  cmake: modules/ota_http
+  kconfig: modules/ota_http/Kconfig

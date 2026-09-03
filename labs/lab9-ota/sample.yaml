@@ -1,0 +1,9 @@
+sample:
+  name: Lab 9 - OTA over HTTP
+  description: Joins the network from Kconfig and updates itself over HTTP
+tests:
+  workshop.lab9.ota:
+    build_only: true
+    platform_allow:
+      - esp32c5_devkitc/esp32c5/hpcore
+    tags: ota dfu wifi

@@ -1,0 +1,23 @@
+mainmenu "Lab 9 - OTA over HTTP"
+
+config LAB9_WIFI_SSID
+	string "Wi-Fi SSID"
+	default "workshop"
+	help
+	  Network the board joins at boot. No quotes needed beyond the ones
+	  Kconfig requires.
+
+config LAB9_WIFI_PSK
+	string "Wi-Fi password"
+	default ""
+	help
+	  Leave empty for an open network.
+
+config LAB9_WIFI_RETRIES
+	int "Connection attempts before giving up"
+	default 5
+	help
+	  A busy 2.4 GHz band drops association attempts, so one try is not
+	  enough in a room full of boards.
+
+source "Kconfig.zephyr"

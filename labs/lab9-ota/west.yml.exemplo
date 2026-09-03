@@ -1,0 +1,37 @@
+# Exemplo de manifesto para o Lab 9.
+#
+# Mostra como o ota_http entra num projeto seu, em vez de ser passado na linha
+# de comando com -DEXTRA_ZEPHYR_MODULES. Copie para a raiz do SEU repositorio
+# como west.yml e rode:
+#
+#   west init -m <url-do-seu-repo> ~/meu-workspace
+#   cd ~/meu-workspace && west update
+#
+# Detalhe que costuma confundir: um projeto west clona o repositorio INTEIRO
+# no caminho indicado, e o Zephyr procura zephyr/module.yml na raiz dele. Por
+# isso o repositorio do workshop tem um zephyr/module.yml na raiz apontando
+# para modules/ota_http - assim o repo todo funciona como modulo, sem precisar
+# de um repositorio separado.
+#
+manifest:
+  projects:
+    - name: zephyr
+      url: https://github.com/zephyrproject-rtos/zephyr
+      # main acompanha o upstream, que e o que usamos no workshop.
+      # Num produto, troque por uma tag (ex.: v4.4.2) para congelar a
+      # versao: sem isso o build de hoje e o de amanha nao sao o mesmo.
+      revision: main
+      import:
+        name-allowlist:
+          - hal_espressif
+          - mcuboot
+          - cmsis
+          - mbedtls
+          - picolibc
+          - segger
+
+    # O modulo deste workshop.
+    - name: zephyr-workshop-2026
+      url: https://github.com/sylvioalves/zephyr-workshop-2026
+      revision: main
+      path: modules/zephyr-workshop-2026

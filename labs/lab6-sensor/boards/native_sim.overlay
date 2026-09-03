@@ -1,0 +1,36 @@
+/* native_sim variant of the Lab 6 hardware description.
+ *
+ * The C5 overlay only has to switch on a sensor the SoC already
+ * describes. native_sim has no die temperature sensor and no button, so
+ * here we declare both and point the same two aliases at them. The
+ * application source is not touched: it still asks for die_temp0 and
+ * sw0.
+ */
+#include <zephyr/dt-bindings/gpio/gpio.h>
+
+/ {
+	aliases {
+		die-temp0 = &bmi160;
+		sw0 = &button0;
+	};
+
+	buttons {
+		compatible = "gpio-keys";
+
+		button0: button_0 {
+			gpios = <&gpio0 1 GPIO_ACTIVE_LOW>;
+			label = "User button";
+			zephyr,code = <11>;
+		};
+	};
+};
+
+&i2c0 {
+	status = "okay";
+
+	bmi160: bmi160@68 {
+		compatible = "bosch,bmi160";
+		reg = <0x68>;
+		status = "okay";
+	};
+};

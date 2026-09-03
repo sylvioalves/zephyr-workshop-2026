@@ -1,0 +1,18 @@
+sample:
+  name: lab4 threads
+  description: Heartbeat thread, worker thread and a semaphore given from an ISR
+common:
+  tags: workshop
+  integration_platforms:
+    - native_sim
+  harness: console
+  harness_config:
+    type: multi_line
+    ordered: true
+    regex:
+      - "heartbeat: up for 0 ms"
+      - "heartbeat: up for 10[0-9][0-9] ms"
+tests:
+  workshop.lab4.threads:
+    platform_allow:
+      - native_sim

@@ -1,0 +1,16 @@
+sample:
+  name: lab6 everything together
+  description: Sampler thread, mutex-guarded stats, button ISR and a shell command
+common:
+  tags: workshop
+  integration_platforms:
+    - native_sim
+  harness: console
+  harness_config:
+    type: one_line
+    regex:
+      - "lab6 running"
+tests:
+  workshop.lab6.sensor:
+    platform_allow:
+      - native_sim

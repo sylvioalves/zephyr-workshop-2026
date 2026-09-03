@@ -1,0 +1,16 @@
+sample:
+  name: lab3 button
+  description: Boot button read through a GPIO interrupt, reported with the log subsystem
+common:
+  tags: workshop
+  integration_platforms:
+    - native_sim
+  harness: console
+  harness_config:
+    type: one_line
+    regex:
+      - "press the boot button"
+tests:
+  workshop.lab3.button:
+    platform_allow:
+      - native_sim

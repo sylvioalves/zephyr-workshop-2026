@@ -1,0 +1,29 @@
+Fonts bundled with this slide deck
+==================================
+
+These files are shipped with the repository so the deck renders identically
+offline, with no CDN and no network access at presentation time.
+
+Fira Sans
+    Copyright (c) 2012-2015, The Mozilla Foundation and Telefonica S.A.
+    Designed by Erik Spiekermann and Ralph du Carrois.
+    Files: firasans-400-*.woff2, firasans-700-*.woff2
+
+Fira Code
+    Copyright (c) 2014, Nikita Prokopov.
+    Based on Fira Mono by Mozilla Foundation and Telefonica S.A.
+    Files: firacode-400-*.woff2, firacode-700-*.woff2
+
+Both are licensed under the SIL Open Font License, Version 1.1, which permits
+redistribution of the font files with or alongside other software. The full
+license text is available at:
+
+    https://openfontlicense.org/
+    https://scripts.sil.org/OFL
+
+The .woff2 files here are the Latin and Latin Extended subsets as served by
+Google Fonts; the Latin Extended subset is what carries the Portuguese
+accented characters used throughout the deck.
+
+These fonts are covered by the OFL, not by this repository's LICENSE or
+LICENSE_SLIDES.

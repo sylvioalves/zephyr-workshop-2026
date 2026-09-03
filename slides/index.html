@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workshop Zephyr RTOS - ESP32-C5</title>
+<style>
+  /* Fira Sans / Fira Code, SIL OFL, shipped in fonts/ so the deck
+   * stays fully offline. See fonts/NOTICE.
+   */
+  @font-face {
+    font-family: 'Fira Code';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(fonts/firacode-400-latin-ext.woff2) format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  @font-face {
+    font-family: 'Fira Code';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(fonts/firacode-400-latin.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+  @font-face {
+    font-family: 'Fira Sans';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(fonts/firasans-400-latin-ext.woff2) format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  @font-face {
+    font-family: 'Fira Sans';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(fonts/firasans-400-latin.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+  @font-face {
+    font-family: 'Fira Sans';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url(fonts/firasans-700-latin-ext.woff2) format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  @font-face {
+    font-family: 'Fira Sans';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url(fonts/firasans-700-latin.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+
+  :root {
+    --bg: #e7ecee;
+    --bg2: #dbe2e4;
+    --panel: #f7fafa;
+    --ink: #1c2e32;
+    --muted: #5c6e72;
+    --line: #c3ced0;
+    --headerbg: #3b3b3b;
+    --white: #fafafa;
+    --red: #b5342a;
+    --cyan: #0e7490;
+    --amber: #a35a06;
+    --green: #15803d;
+    --link: #2563eb;
+    --mono: "Fira Code", ui-monospace, "SF Mono", "Cascadia Code", "JetBrains Mono", Menlo, Consolas, monospace;
+    --sans: "Fira Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  @font-face {
+    font-family: 'Fira Code';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url(fonts/firacode-700-latin-ext.woff2) format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  @font-face {
+    font-family: 'Fira Code';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url(fonts/firacode-700-latin.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--ink);
+    overflow: hidden;
+  }
+
+  /* progress + counter */
+  #bar { position: fixed; top: 0; left: 0; height: 4px; background: var(--red); width: 0; z-index: 50; transition: width .25s ease; }
+  #counter { position: fixed; bottom: 18px; right: 24px; font-family: var(--mono); font-size: 13px; color: var(--muted); z-index: 40; letter-spacing: .04em; }
+  #brand { position: fixed; bottom: 18px; left: 24px; font-size: 13px; color: var(--muted); z-index: 40; }
+  #brand b { color: var(--ink); }
+  #hint { position: fixed; top: 16px; right: 24px; font-size: 12px; color: var(--muted); z-index: 40; opacity: .55; }
+
+  /* slides */
+  .slide {
+    position: absolute; inset: 0;
+    display: none;
+    flex-direction: column; justify-content: center;
+    padding: 6vh 9vw;
+    animation: fade .35s ease;
+  }
+  .slide.active { display: flex; }
+  @keyframes fade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  /* content slides carry the title in a solid bar across the top */
+  .slide:not(.title):not(.divider) { padding-top: calc(6vh + 74px); }
+  .slide:not(.title):not(.divider) > h2 {
+    position: absolute; top: 0; left: 0; width: 100%;
+    background: var(--headerbg); color: var(--white);
+    padding: 16px 9vw; margin: 0;
+    font-size: clamp(20px, 2.6vw, 34px); line-height: 1.2;
+    letter-spacing: -.01em; z-index: 10;
+  }
+  .slide:not(.title):not(.divider) > h2 .u { color: #ff9e93; }
+  .slide:not(.title):not(.divider) > h2 code.inl {
+    background: #4a4a4a; border-color: #5c5c5c; color: #fff;
+  }
+  /* the bar replaces the old accent rule */
+  .slide:not(.title):not(.divider) > .rule { display: none; }
+  .slide:not(.title):not(.divider) > .kicker { margin-bottom: 18px; }
+
+  .kicker { text-transform: uppercase; letter-spacing: .22em; font-size: clamp(11px, 1.1vw, 15px); color: var(--cyan); font-weight: 700; margin-bottom: 14px; }
+  h1 { font-size: clamp(30px, 5vw, 62px); line-height: 1.05; letter-spacing: -.02em; }
+  h2 { font-size: clamp(26px, 3.6vw, 46px); line-height: 1.1; letter-spacing: -.01em; margin-bottom: 6px; }
+  h2 .u { color: var(--red); }
+  .sub { color: var(--muted); font-size: clamp(15px, 1.7vw, 22px); margin-top: 10px; max-width: 60ch; }
+  .rule { width: 70px; height: 5px; border-radius: 5px; background: var(--red); margin: 18px 0 26px; }
+
+  ul { list-style: none; margin-top: 10px; }
+  li { position: relative; padding-left: 30px; margin: 14px 0; font-size: clamp(16px, 1.9vw, 24px); line-height: 1.4; max-width: 62ch; }
+  li::before { content: ""; position: absolute; left: 4px; top: .55em; width: 9px; height: 9px; border-radius: 2px; background: var(--cyan); }
+  li small { color: var(--muted); font-size: .8em; }
+  strong { color: #111c1e; font-weight: 600; }
+  .warn strong { color: var(--amber); }
+  a { color: var(--link); text-decoration: none; }
+  a.doclink { font-family: var(--mono); font-size: .82em; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+  code.inl { font-family: var(--mono); background: #d9e2e3; border: 1px solid var(--line); padding: 1px 7px; border-radius: 6px; font-size: .85em; color: #10484f; }
+
+  pre {
+    font-family: var(--mono); background: #f5f8f8; border: 1px solid var(--line);
+    border-left: 4px solid var(--cyan); border-radius: 10px;
+    padding: 18px 20px; margin-top: 14px; overflow: auto;
+    font-size: clamp(13px, 1.35vw, 18px); line-height: 1.55; color: #1e3034;
+    max-width: 100%;
+  }
+  pre.cmd { border-left-color: var(--green); }
+  pre.bad { border-left-color: var(--red); }
+  pre .c { color: #7d8c8f; }
+  pre .k { color: #a35a06; }
+  pre .s { color: #146c43; }
+  pre .p { color: var(--muted); }
+  pre .e { color: var(--red); }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 34px; align-items: start; }
+  .two > * { min-width: 0; }
+  .two pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px; box-shadow: 0 1px 3px rgba(28,46,50,.12); }
+  .card h3 { font-size: clamp(16px, 1.7vw, 22px); margin-bottom: 6px; }
+  .card.red { border-top: 3px solid var(--red); }
+  .card.cyan { border-top: 3px solid var(--cyan); }
+  .card.green { border-top: 3px solid var(--green); }
+  .card p { color: var(--muted); font-size: clamp(14px, 1.5vw, 19px); line-height: 1.45; }
+
+  /* build pipeline flow: 3 inputs converge into build -> output */
+  .flow { display: flex; align-items: center; gap: 16px; flex-wrap: nowrap; margin-top: 22px; }
+  .flow .stack { display: flex; flex-direction: column; gap: 10px; }
+  .flow .b { background: var(--panel); border: 1px solid var(--cyan); border-radius: 10px; padding: 12px 16px; min-width: 150px; }
+  .flow .b b { display: block; color: var(--ink); font-size: clamp(13px, 1.4vw, 18px); }
+  .flow .b span { color: var(--muted); font-size: clamp(11px, 1.1vw, 14px); font-family: var(--mono); }
+  /* all pipeline blocks share one border colour - no odd one out */
+  .flow .ar { align-self: center; color: var(--cyan); font-size: clamp(18px, 2vw, 28px); }
+  /* boot paths, drawn as SVG so the connectors are real lines */
+  .bootsvg { width: 100%; max-width: 940px; height: auto; margin-top: 18px; display: block; flex: 0 0 auto; }
+  .bootsvg .wire path { fill: none; stroke: #93a3a6; stroke-width: 3; stroke-linecap: round; }
+  .bootsvg .box rect { fill: var(--panel); stroke-width: 2.5; }
+  .bootsvg .box .t { fill: var(--ink); font-size: 21px; font-weight: 700; text-anchor: middle;
+                     font-family: var(--sans); }
+  .bootsvg .box .m { fill: var(--muted); font-size: 15px; text-anchor: middle;
+                     font-family: var(--mono); }
+  .bootsvg .rom rect { stroke: #93a3a6; stroke-dasharray: 7 5; }
+  .bootsvg .app rect { stroke: var(--green); }
+  .bootsvg .boot rect { stroke: var(--amber); }
+  .bootsvg .slot rect { stroke: var(--cyan); }
+  .bootsvg .route { font-family: var(--mono); font-size: 16px; font-weight: 700;
+                    letter-spacing: .08em; text-transform: uppercase; }
+  .bootsvg .route.green { fill: var(--green); }
+  .bootsvg .route.amber { fill: var(--amber); }
+  .bootsvg .or { fill: var(--cyan); font-family: var(--mono); font-size: 15px; text-anchor: middle; }
+  .fx.one { grid-template-columns: 1fr; }
+
+  /* numbered phase list (west build overview) */
+  .phases { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 26px; margin-top: 18px; }
+  .ph { display: grid; grid-template-columns: max-content 1fr; gap: 2px 12px; align-items: baseline;
+        border-left: 2px solid var(--cyan); padding: 3px 0 3px 12px; }
+  .ph .i { grid-row: 1 / span 2; font-family: var(--mono); color: var(--cyan); font-weight: 700;
+           font-size: clamp(15px, 1.7vw, 21px); }
+  .ph b { color: var(--ink); font-size: clamp(13px, 1.45vw, 18px); }
+  .ph .d { color: var(--muted); font-size: clamp(11px, 1.2vw, 15px); line-height: 1.35; }
+  .ph .d code { font-family: var(--mono); color: #10484f; }
+
+  /* numbered deep-dive steps (one phase per slide) */
+  .steps { display: grid; gap: 12px; margin-top: 18px; }
+  .st { display: grid; grid-template-columns: max-content 1fr; gap: 3px 14px; align-items: baseline;
+        border-left: 2px solid var(--cyan); padding: 4px 0 4px 14px; }
+  .st .i { grid-row: 1 / span 2; font-family: var(--mono); color: var(--cyan); font-weight: 700;
+           font-size: clamp(13px, 1.4vw, 18px); }
+  .st b { color: var(--ink); font-size: clamp(14px, 1.5vw, 20px); }
+  .st .d { color: var(--muted); font-size: clamp(12px, 1.25vw, 17px); line-height: 1.45; }
+  .st .d code { font-family: var(--mono); color: #10484f; }
+  .st.out { border-left-color: var(--green); }
+  .st.out .i { color: var(--green); }
+  .st.key { border-left-color: var(--amber); }
+  .st.key .i { color: var(--amber); }
+
+  /* file tree: grid so the glyphs and comments can never collapse */
+  .tree { display: grid; grid-template-columns: max-content 1fr; gap: 7px 30px; margin-top: 20px; align-items: baseline; }
+  .tree .t { font-family: var(--mono); white-space: pre; font-size: clamp(13px, 1.5vw, 20px); color: var(--ink); }
+  .tree .t .d { color: var(--cyan); }
+  .tree .t .f { color: var(--amber); }
+  .tree .n { color: var(--muted); font-size: clamp(12px, 1.3vw, 17px); line-height: 1.35; }
+
+  /* section divider */
+  .divider { background: var(--headerbg); }
+  .divider .num { font-family: var(--mono); font-size: clamp(60px, 12vw, 150px); color: #ff9e93; font-weight: 800; line-height: 1; }
+  .divider h2 { font-size: clamp(30px, 5vw, 60px); margin-top: 6px; color: var(--white); }
+  .divider .sub { font-size: clamp(16px, 2vw, 26px); color: #c9d0d1; }
+  .divider .rule { background: #ff9e93; }
+  .divider code.inl { background: #4a4a4a; border-color: #5c5c5c; color: #fff; }
+
+  /* title slide */
+  .title .chip, .title h1, .title .sub, .title .url { max-width: calc(100% - 230px); }
+  .wifibox { position: absolute; top: 6vh; right: 5vw; text-align: center;
+             background: #fff; border: 1px solid var(--line); border-radius: 12px;
+             padding: 14px 14px 10px; box-shadow: 0 2px 6px rgba(28,46,50,.12); }
+  .wifibox img { display: block; width: clamp(96px, 11vw, 150px); height: auto; margin: 0 auto; }
+  .wifibox .wtag { font-size: clamp(10px, 1.05vw, 14px); color: var(--muted);
+                   letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; }
+  .wifibox .wssid { font-family: var(--mono); font-size: clamp(11px, 1.15vw, 15px);
+                    color: var(--ink); margin-top: 9px; font-weight: 700; }
+  .wifibox .wpw { font-family: var(--mono); font-size: clamp(10px, 1.05vw, 14px);
+                  color: var(--muted); margin-top: 2px; }
+  .title { background: linear-gradient(135deg, #ffffff 0%, var(--bg2) 100%); }
+  .title h1 { font-size: clamp(34px, 6.4vw, 82px); color: var(--headerbg); }
+  .title .chip { display: inline-block; font-family: var(--mono); font-size: clamp(12px, 1.3vw, 16px); color: var(--cyan); border: 1px solid var(--line); background: var(--panel); padding: 6px 14px; border-radius: 999px; margin-bottom: 22px; }
+  .title .url { margin-top: 26px; font-family: var(--mono); color: var(--muted); font-size: clamp(13px, 1.5vw, 19px); }
+  .title .url b { color: var(--link); }
+  /* Organizer / logo strip. The -on-light assets carry dark ink, so the
+   * logos sit straight on the page with no band behind them.
+   */
+  .orgstrip { display: flex; gap: clamp(30px, 4vw, 56px); align-items: center; margin-top: 46px;
+              flex-wrap: wrap; align-self: flex-start; }
+  .oglogo { width: auto; }
+  /* Board intro: facts on the left, the devkit photo on the right. */
+  .boardrow { display: flex; gap: clamp(18px, 2.6vw, 40px); align-items: center; }
+  .boardrow .fx { grid-template-columns: 1fr; flex: 1 1 auto; margin-top: 0; }
+  .boardphoto { flex: 0 0 auto; width: clamp(250px, 39%, 500px); height: auto; }
+  /* Still used as a small-caps caption on a few content slides. */
+  .oglabel { text-transform: uppercase; letter-spacing: .2em; font-size: clamp(10px, .95vw, 12px); color: var(--muted); }
+  .oglogo.esp { height: 24px; }
+  .oglogo.zephyr { height: 46px; }
+  .oglogo.emb { height: 34px; }
+
+  table.agenda { border-collapse: collapse; margin-top: 18px; width: 100%; max-width: 900px; font-size: clamp(12px, 1.4vw, 19px); }
+  table.agenda td { padding: 8px 14px; border-bottom: 1px solid var(--line); }
+  table.agenda td:first-child { font-family: var(--mono); color: var(--cyan); white-space: nowrap; width: 1%; }
+  table.agenda tr.brk td { color: var(--muted); font-style: italic; }
+  .stack { display: grid; grid-template-columns: auto 1fr 1fr 1fr; gap: 10px 14px; margin-top: 18px; }
+  .stack > * { min-width: 0; }
+  .stack .rl { color: var(--muted); font-size: clamp(11px, 1.2vw, 16px); display: flex; align-items: center; justify-content: flex-end; text-align: right; line-height: 1.25; }
+  .stack .hd { font-weight: 700; text-align: center; font-size: clamp(14px, 1.5vw, 20px); }
+  .stack .hd.z { color: var(--cyan); }
+  .stack .bk { border: 1px solid var(--line); border-radius: 8px; padding: 13px 10px; font-size: clamp(11px, 1.25vw, 17px); text-align: center; background: var(--panel); display: flex; align-items: center; justify-content: center; line-height: 1.3; }
+  .stack .bk.z { border-color: var(--cyan); color: var(--cyan); }
+  .stack .bk.hw { background: transparent; border-style: dashed; color: var(--muted); }
+  .stack.duo { grid-template-columns: auto 1fr 1fr; }
+  .arch2 { display: grid; grid-template-columns: auto 1fr; gap: 8px 14px; margin-top: 20px; }
+  .arch2 > * { min-width: 0; }
+  .grp2 { display: flex; align-items: center; justify-content: center;
+          border-left: 3px solid var(--cyan); border-radius: 2px; padding-left: 8px; }
+  .grp2 span { writing-mode: vertical-rl; transform: rotate(180deg); color: var(--cyan);
+               font-size: clamp(10px, 1.05vw, 15px); font-weight: 700; letter-spacing: .07em;
+               text-transform: uppercase; white-space: nowrap; }
+  .grp2.dim { border-left-color: var(--muted); }
+  .grp2.dim span { color: var(--muted); }
+  .band { background: var(--ink); color: #fff; border-radius: 7px; padding: 12px 14px;
+          text-align: center; font-size: clamp(12px, 1.35vw, 19px); font-weight: 600; }
+  .cols { display: grid; gap: 8px; }
+  .cols .sub { background: var(--cyan); color: #fff; border-radius: 7px; padding: 11px 7px;
+               text-align: center; font-size: clamp(10px, 1.15vw, 16px); line-height: 1.25; }
+  .plat { background: var(--ink); border-radius: 7px; padding: 11px 11px 12px; }
+  .plat .pt { color: #fff; text-align: center; font-weight: 600; margin-bottom: 9px;
+              font-size: clamp(11px, 1.25vw, 17px); }
+  .bindb { border: 1px dashed var(--amber); color: var(--amber); border-radius: 7px;
+           padding: 11px 14px; text-align: center; font-size: clamp(11px, 1.15vw, 16px); }
+
+  .fx { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 26px; margin-top: 16px; }
+  .fx .row { border-left: 3px solid var(--amber); padding: 4px 0 4px 14px; }
+  .fx .sym { font-weight: 700; font-size: clamp(14px, 1.5vw, 19px); }
+  .fx .fix { color: var(--muted); font-size: clamp(13px, 1.35vw, 17px); }
+  .fx .fix code { font-family: var(--mono); color: #10484f; }
+
+  .big { font-size: clamp(22px, 3.2vw, 40px); line-height: 1.25; max-width: 22ch; }
+  .big .u { color: var(--red); }
+
+
+  /* Narrow screens / small preview panes: never scroll sideways.
+   * Scoped to `screen` on purpose: the PDF export lays every slide out at a
+   * fixed 1280px, but headless Chrome evaluates media queries against its own
+   * viewport, so an unscoped rule here silently printed the mobile layout.
+   */
+  @media screen and (max-width: 900px) {
+    .two { grid-template-columns: 1fr; gap: 16px; }
+    .fx { grid-template-columns: 1fr; }
+    .flow { gap: 8px; }
+    .slide { padding: 5vh 6vw; }
+    .slide:not(.title):not(.divider) { padding-top: calc(5vh + 64px); }
+    .slide:not(.title):not(.divider) > h2 { padding: 12px 6vw; }
+  }
+  /* print / PDF export: every slide becomes its own page.
+   * Generate with: scripts/export-pdf.sh
+   */
+  @page { size: 1280px 800px; margin: 0; }
+  @media print {
+    html, body { height: auto; overflow: visible; background: var(--bg); }
+    #bar, #counter, #hint { display: none !important; }
+    #brand { position: absolute; bottom: 18px; left: 24px; }
+    .slide {
+      display: flex !important;
+      position: relative; inset: auto;
+      width: 1280px; height: 800px;
+      break-after: page; page-break-after: always;
+      animation: none;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .slide:last-child { break-after: auto; page-break-after: auto; }
+    .slide:not(.title):not(.divider) > h2 { position: absolute; }
+    pre { overflow: visible; }
+  }
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div id="hint">setas / espaço &middot; f para tela cheia</div>
+<div id="brand"><b>Zephyr RTOS</b> &middot; ESP32-C5-DevKitC &middot; Embarcados</div>
+<div id="counter"></div>
+
+<!-- 01 TITLE -->
+<section class="slide title">
+  <div class="wifibox">
+    <div class="wtag">Wi-Fi da sala</div>
+    <img src="assets/wifi-qr.svg" alt="QR code para conectar na rede FIEP-EVENTOS">
+    <div class="wssid">FIEP-EVENTOS</div>
+    <div class="wpw">Eventoscampus@2025</div>
+  </div>
+  <div class="chip">Workshop prático</div>
+  <h1>Introdução ao<br>Zephyr RTOS<br>com ESP32-C5</h1>
+  <p class="sub">Do primeiro build ao rádio: fluxo de trabalho, devicetree, Kconfig, GPIO, threads, shell, sensores e BLE.</p>
+  <p class="url">Acompanhe em: <b>https://sylvioalves.github.io/zephyr-workshop-2026/</b></p>
+  <div class="orgstrip">
+    <img class="oglogo emb" src="assets/embarcados-on-light.png" alt="Embarcados - embarcados.com.br">
+    <img class="oglogo esp" src="assets/espressif-on-light.svg" alt="Espressif">
+    <img class="oglogo zephyr" src="assets/zephyr-on-light.svg" alt="Zephyr Project">
+  </div>
+</section>
+
+<!-- 02 AGENDA -->
+<section class="slide">
+  <div class="kicker">Como vai ser</div>
+  <h2>Agenda</h2>
+  <div class="rule"></div>
+  <table class="agenda">
+    <tr><td>01</td><td>Boas-vindas, o que é Zephyr, workspace west, triagem</td></tr>
+    <tr><td>02</td><td>Fluxo de trabalho: anatomia da app, pipeline, alvos de placa</td></tr>
+    <tr><td>03</td><td>Lab 1 - hello_world: compilar, gravar, console</td></tr>
+    <tr><td>04</td><td>Lab 2 - Devicetree + Kconfig (a hora difícil), e o LED RGB</td></tr>
+    <tr class="brk"><td>&middot;&middot;</td><td>Intervalo</td></tr>
+    <tr><td>05</td><td>Lab 3 - Botão + interrupção + log</td></tr>
+    <tr><td>06</td><td>Lab 4 - Threads + semáforo</td></tr>
+    <tr><td>07</td><td>Lab 5 - Comando de shell</td></tr>
+    <tr><td>08</td><td>Lab 6 - Tudo junto numa aplicação só</td></tr>
+    <tr><td>09</td><td>Twister: garantindo que isso continue funcionando</td></tr>
+    <tr><td>10</td><td>Levando para o produto: manifesto, módulos e bootloader</td></tr>
+    <tr><td>11</td><td>Lab 7 - Wi-Fi: do scan até o ping</td></tr>
+    <tr><td>12</td><td>Lab 8 - BLE: a placa no seu celular</td></tr>
+    <tr><td>13</td><td>Lab 9 - Atualização OTA pela rede</td></tr>
+    <tr><td>14</td><td>Próximos passos e encerramento</td></tr>
+  </table>
+</section>
+
+<!-- 03 HOW TO FOLLOW -->
+<section class="slide">
+  <div class="kicker">Antes de começar</div>
+  <h2>Como acompanhar</h2>
+  <div class="rule"></div>
+  <ul>
+    <li>Clone o repositório do workshop.</li>
+    <li>Os slides abrem <strong>offline</strong> em <code class="inl">slides/index.html</code>.</li>
+    <li>Labs 2 a 6, 8 e 9 têm os arquivos prontos em <code class="inl">labs/labN-nome/</code>.</li>
+    <li>Labs 1 e 7 usam samples da própria árvore do Zephyr - nada para baixar.</li>
+    <li>Travou? Compare o seu com a solução usando <code class="inl">diff</code>.</li>
+  </ul>
+  <pre class="cmd"><span class="c"># todos na mesma versão</span>
+git clone https://github.com/sylvioalves/zephyr-workshop-2026
+cd zephyr-workshop-2026</pre>
+  <p class="sub" style="margin-top:18px; max-width:none">O ambiente do Zephyr precisa estar <strong>instalado e funcionando</strong> antes de começarmos, conforme o guia oficial:<br>
+  <a class="doclink" href="https://docs.zephyrproject.org/latest/develop/getting_started/" target="_blank" rel="noopener">https://docs.zephyrproject.org/latest/develop/getting_started/</a></p>
+</section>
+
+<!-- 04 THE BOARD -->
+<section class="slide">
+  <div class="kicker">Antes do software</div>
+  <h2>A placa na sua <span class="u">mesa</span></h2>
+  <div class="rule"></div>
+  <div class="boardrow">
+    <div class="fx">
+      <div class="row"><div class="sym">Dois núcleos RISC-V</div><div class="fix">HP até 240 MHz e LP até 20 MHz - por isso o alvo pede <code>/esp32c5/hpcore</code></div></div>
+      <div class="row"><div class="sym">Um rádio, três protocolos</div><div class="fix">Wi-Fi, Bluetooth LE e 802.15.4 dividem o mesmo rádio, revezando-se por fatias de tempo</div></div>
+      <div class="row"><div class="sym">Dois conectores USB-C</div><div class="fix">um é a UART0, o outro é USB Serial/JTAG</div></div>
+      <div class="row"><div class="sym">29 GPIOs, 384 KB de SRAM</div><div class="fix">módulo WROOM-1 com 8 MB de flash e 4 MB de PSRAM</div></div>
+    </div>
+    <img class="boardphoto" src="assets/esp32c5-devkitc.png" alt="ESP32-C5-DevKitC-1">
+  </div>
+  <p class="sub" style="margin-top:18px">Hoje usamos: o <strong>botão de boot</strong>, o <strong>console UART0</strong>, o <strong>sensor de temperatura do die</strong>, o <strong>LED RGB</strong> e os rádios <strong>Wi-Fi</strong> e <strong>BLE</strong>.</p>
+</section>
+
+<!-- 05 WHAT IS ZEPHYR -->
+<section class="slide">
+  <div class="kicker">Fundamentos</div>
+  <h2>O que é o <span class="u">Zephyr</span>?</h2>
+  <div class="rule"></div>
+  <div class="two">
+    <div class="card cyan"><h3>Um RTOS</h3><p>Kernel pequeno com threads, escalonador, timers e primitivas de sincronização.</p></div>
+    <div class="card cyan"><h3>Um sistema de build</h3><p>CMake + west + Kconfig + devicetree geram um binário a partir da sua configuração.</p></div>
+    <div class="card red"><h3>Uma árvore de drivers</h3><p>Mais de mil placas e milhares de periféricos atrás de uma única API portável.</p></div>
+    <div class="card red"><h3>Um ecossistema</h3><p>Módulos, HALs de fabricantes e blobs de RF, tudo orquestrado pelo west.</p></div>
+  </div>
+</section>
+
+<!-- 06 COMPARE -->
+<section class="slide">
+  <div class="kicker">Para situar</div>
+  <h2>Duas formas de escrever <span class="u">firmware</span></h2>
+  <div class="rule"></div>
+  <div class="stack duo">
+    <div></div>
+    <div class="hd">ESP-IDF</div>
+    <div class="hd z">Zephyr</div>
+
+    <div class="rl">Sua aplicação</div>
+    <div class="bk"><code class="inl">app_main()</code></div>
+    <div class="bk z"><code class="inl">main()</code></div>
+
+    <div class="rl">Subsistemas</div>
+    <div class="bk">componentes: <code class="inl">esp_wifi</code>, <code class="inl">nvs_flash</code>, lwIP</div>
+    <div class="bk z">subsistemas: networking, Bluetooth, file systems, shell, logging</div>
+
+    <div class="rl">Kernel</div>
+    <div class="bk">FreeRTOS</div>
+    <div class="bk z">kernel próprio: threads, escalonador, timers</div>
+
+    <div class="rl">API de drivers</div>
+    <div class="bk">um driver por periférico, dentro do SDK</div>
+    <div class="bk z">a mesma API para todos: <code class="inl">gpio.h</code>, <code class="inl">sensor.h</code></div>
+
+    <div class="rl">Descrição<br>do hardware</div>
+    <div class="bk">no código e nos headers do SDK</div>
+    <div class="bk z">no devicetree: <code class="inl">.dts</code> e <code class="inl">.overlay</code></div>
+
+    <div class="rl">Configuração</div>
+    <div class="bk">Kconfig, resolvido em <code class="inl">sdkconfig</code></div>
+    <div class="bk z">Kconfig, resolvido em <code class="inl">.config</code></div>
+
+    <div class="rl">HAL e hardware</div>
+    <div class="bk hw">HAL dentro do SDK &middot; SoCs da Espressif</div>
+    <div class="bk hw">HAL como módulo west &middot; mais de mil placas</div>
+  </div>
+</section>
+
+<!-- 07 ARCH -->
+<section class="slide">
+  <div class="kicker">Por dentro</div>
+  <h2>A pilha do Zephyr, do silício ao seu <span class="u">main()</span></h2>
+  <div class="rule"></div>
+  <div class="arch2">
+    <div class="grp2" style="grid-row: 1 / span 2"><span>Aplicação</span></div>
+    <div class="band">Sua aplicação</div>
+    <div class="cols" style="grid-template-columns: repeat(3, 1fr)">
+      <div class="sub">main.c</div><div class="sub">prj.conf</div><div class="sub">boards/*.overlay</div>
+    </div>
+
+    <div class="grp2" style="grid-row: 3 / span 3"><span>Serviços do SO</span></div>
+    <div class="cols" style="grid-template-columns: repeat(5, 1fr)">
+      <div class="sub">logging</div><div class="sub">shell</div><div class="sub">Bluetooth</div>
+      <div class="sub">networking</div><div class="sub">file systems</div>
+    </div>
+    <div class="band">API de drivers</div>
+    <div class="cols" style="grid-template-columns: repeat(6, 1fr)">
+      <div class="sub">gpio</div><div class="sub">uart</div><div class="sub">i2c</div>
+      <div class="sub">spi</div><div class="sub">sensor</div><div class="sub">wifi</div>
+    </div>
+
+    <div></div>
+    <div class="bindb">devicetree descreve o hardware e Kconfig escolhe o que é compilado</div>
+
+    <div class="grp2 dim" style="grid-row: 7 / span 3"><span>Kernel e plataforma</span></div>
+    <div class="band">Kernel: threads, escalonador, semáforos, mutexes, timers</div>
+    <div class="band">HAL do fabricante: hal_espressif e blobs de rádio</div>
+    <div class="plat">
+      <div class="pt">Plataforma: ESP32-C5</div>
+      <div class="cols" style="grid-template-columns: repeat(4, 1fr)">
+        <div class="sub">núcleo HP</div><div class="sub">núcleo LP</div>
+        <div class="sub">um rádio: Wi-Fi, BLE e 802.15.4 em fatias de tempo</div><div class="sub">periféricos</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 THE BIG IDEA -->
+<section class="slide">
+  <div class="kicker">Fundamentos</div>
+  <h2>A grande <span class="u">ideia</span></h2>
+  <div class="rule"></div>
+  <p class="big">O mesmo aplicativo roda em <span class="u">muitas placas</span> porque o hardware é descrito em dados, não no código.</p>
+  <p class="sub" style="margin-top:26px">Esses dados são o <strong>devicetree</strong>. É por isso que o mesmo código roda em mais de mil placas - e por que ele não compila quando a placa não descreve o periférico que você pediu.</p>
+</section>
+
+<!-- 09 WEST WORKSPACE -->
+<section class="slide">
+  <div class="kicker">Onde tudo mora</div>
+  <h2>O workspace west</h2>
+  <div class="rule"></div>
+  <pre><span class="c"># ~/zephyrproject/</span>
+<span class="k">.venv/</span>        <span class="c">venv com west + dependências de Python</span>
+<span class="k">.west/</span>        <span class="c">configuração do workspace</span>
+<span class="k">zephyr/</span>       <span class="c">repositório de manifesto (kernel + samples)</span>
+<span class="k">modules/</span>      <span class="c">HALs e bibliotecas puxadas pelo manifesto</span>
+   <span class="p">hal_espressif/  ...  +40 repositórios</span></pre>
+  <ul>
+    <li><code class="inl">west init</code> escolhe o manifesto; <code class="inl">west update</code> baixa os módulos.</li>
+    <li>Ative o venv em <strong>todo</strong> terminal novo antes de usar o west.</li>
+  </ul>
+</section>
+
+<!-- 10 APP ANATOMY -->
+<section class="slide">
+  <div class="kicker">Fluxo de trabalho</div>
+  <h2>Anatomia de uma aplicação</h2>
+  <div class="rule"></div>
+  <div class="tree">
+    <div class="t"><span class="d">minha-app/</span></div>
+    <div class="n"></div>
+
+    <div class="t">├── <span class="f">CMakeLists.txt</span></div>
+    <div class="n">registra a aplicação e os fontes</div>
+
+    <div class="t">├── <span class="f">prj.conf</span></div>
+    <div class="n">Kconfig: o que compilar junto</div>
+
+    <div class="t">├── <span class="d">src/</span></div>
+    <div class="n"></div>
+
+    <div class="t">│   └── <span class="f">main.c</span></div>
+    <div class="n">o seu código</div>
+
+    <div class="t">└── <span class="d">boards/</span></div>
+    <div class="n"></div>
+
+    <div class="t">    └── <span class="f">esp32c5_devkitc_hpcore.overlay</span></div>
+    <div class="n">devicetree: hardware adicional</div>
+  </div>
+  <ul>
+    <li>São só <strong>4 arquivos</strong>. Nada de mágica escondida.</li>
+    <li>O nome do overlay tem que <strong>bater exatamente</strong> com o alvo da placa - senão ele é ignorado em silêncio.</li>
+  </ul>
+</section>
+
+<!-- 11 BUILD PIPELINE -->
+<section class="slide">
+  <div class="kicker">Fluxo de trabalho</div>
+  <h2>O pipeline de build</h2>
+  <div class="rule"></div>
+  <div class="flow">
+    <div class="stack">
+      <div class="b in"><b>Devicetree</b><span>.dts + .overlay</span></div>
+      <div class="b in"><b>Kconfig</b><span>defconfig + prj.conf</span></div>
+      <div class="b in"><b>Seu código</b><span>src/*.c</span></div>
+    </div>
+    <div class="ar">&rarr;</div>
+    <div class="b step"><b>CMake + Ninja</b><span>west build</span></div>
+    <div class="ar">&rarr;</div>
+    <div class="b out"><b>Binário</b><span>zephyr.elf / .bin</span></div>
+  </div>
+  <ul>
+    <li>Devicetree e Kconfig não são compilados: eles <strong>geram cabeçalhos</strong> que o seu código usa.</li>
+    <li>Por isso mudar um <code class="inl">.overlay</code> ou o <code class="inl">prj.conf</code> exige build limpa.</li>
+  </ul>
+</section>
+
+<!-- 12 THE 7 PHASES -->
+<section class="slide">
+  <div class="kicker">Fluxo de trabalho &middot; por dentro</div>
+  <h2>O que o <code class="inl">west build</code> faz, em ordem</h2>
+  <div class="rule"></div>
+  <div class="phases">
+    <div class="ph"><span class="i">0</span><b>west build</b><span class="d">resolve placa, diretório e cache; <code>-p</code> apaga tudo</span></div>
+    <div class="ph"><span class="i">1</span><b>CMake configure</b><span class="d">find_package(Zephyr) &rarr; 19 módulos CMake em ordem fixa</span></div>
+    <div class="ph"><span class="i">2</span><b>Devicetree</b><span class="d">junta .dtsi + .dts + overlays &rarr; valida bindings &rarr; <code>zephyr.dts</code></span></div>
+    <div class="ph"><span class="i">3</span><b>Kconfig</b><span class="d">defconfig &rarr; prj.conf &rarr; extras &rarr; <code>.config</code> + <code>autoconf.h</code></span></div>
+    <div class="ph"><span class="i">4</span><b>Geração de código</b><span class="d">syscalls, offsets, linker.cmd</span></div>
+    <div class="ph"><span class="i">5</span><b>Compilação</b><span class="d">cada subsistema vira uma lib estática</span></div>
+    <div class="ph"><span class="i">6</span><b>Link (2 ou 3 passos)</b><span class="d">pre0 &rarr; [pre1] &rarr; final</span></div>
+    <div class="ph"><span class="i">7</span><b>Pós-processamento</b><span class="d">.bin/.hex, .map, runners.yaml</span></div>
+  </div>
+  <p class="sub" style="margin-top:16px">Cada fase está aberta em detalhe na referência completa: <code class="inl">build-flow.md</code>.</p>
+</section>
+
+<!-- 13 DTS BEFORE KCONFIG + MULTI-LINK -->
+<section class="slide">
+  <div class="kicker">Fluxo de trabalho &middot; duas surpresas</div>
+  <h2>Duas coisas que quase ninguém sabe</h2>
+  <div class="rule"></div>
+  <div class="two">
+    <div class="card cyan">
+      <h3>1. Devicetree roda <em>antes</em> do Kconfig</h3>
+      <p>O devicetree gera símbolos <code class="inl">DT_HAS_&lt;compat&gt;_ENABLED</code>, e os drivers dependem deles:</p>
+      <pre style="margin-top:10px">config ESP32_TEMP
+  depends on <span class="k">DT_HAS_ESPRESSIF_ESP32_TEMP_ENABLED</span></pre>
+      <p style="margin-top:8px">Ligar o nó no devicetree é o que faz o driver existir para o Kconfig.</p>
+    </div>
+    <div class="card red">
+      <h3>2. O Zephyr linka mais de uma vez</h3>
+      <p>Tabelas de interrupção e objetos de kernel só podem ser gerados <strong>depois</strong> de saber os endereços - e gerá-los muda o binário.</p>
+      <pre style="margin-top:10px"><span class="k">zephyr_pre0.elf</span>   &larr; gera isr_tables
+      &darr;
+<span class="k">zephyr.elf</span>       &larr; imagem final</pre>
+    </div>
+  </div>
+</section>
+
+<!-- 14 BOARD TARGETS -->
+<section class="slide">
+  <div class="kicker">Fluxo de trabalho</div>
+  <h2>Alvos de placa (e seus qualificadores)</h2>
+  <div class="rule"></div>
+  <pre>esp32c5_devkitc<span class="k">/esp32c5/hpcore</span>
+<span class="p">   placa            SoC     núcleo</span></pre>
+  <ul>
+    <li>Esta placa tem <strong>dois núcleos</strong> (HP e LP), então o alvo precisa dizer qual.</li>
+    <li>Sem os qualificadores o build <strong>falha</strong> - mas o erro já lista os alvos válidos.</li>
+    <li>Para descobrir: <code class="inl">west boards | grep esp32c5</code></li>
+  </ul>
+  <pre class="cmd">west build -p -b esp32c5_devkitc/esp32c5/hpcore .</pre>
+</section>
+
+<!-- 15 DEV LOOP -->
+<section class="slide">
+  <div class="kicker">Fluxo de trabalho</div>
+  <h2>O ciclo de desenvolvimento</h2>
+  <div class="rule"></div>
+  <div class="flow">
+    <div class="b"><b>1. Editar</b><span>código / conf / overlay</span></div>
+    <div class="ar">&rarr;</div>
+    <div class="b"><b>2. Compilar</b><span>west build</span></div>
+    <div class="ar">&rarr;</div>
+    <div class="b"><b>3. Gravar</b><span>west flash</span></div>
+    <div class="ar">&rarr;</div>
+    <div class="b out"><b>4. Observar</b><span>west espressif monitor</span></div>
+  </div>
+  <ul>
+    <li><code class="inl">-p</code> força build limpa. Use <strong>sempre</strong> que mudar placa, overlay ou Kconfig.</li>
+    <li>Build incremental serve para mudanças só em <code class="inl">.c</code>.</li>
+  </ul>
+</section>
+
+<!-- 16 DIV LAB1 -->
+<section class="slide divider">
+  <div class="num">01</div>
+  <h2>hello_world</h2>
+  <p class="sub">A vitória garantida: toolchain, gravação e console funcionando.</p>
+</section>
+
+<!-- 17 LAB1 CMDS -->
+<section class="slide">
+  <div class="kicker">Lab 1</div>
+  <h2>Compilar, gravar, ver</h2>
+  <div class="rule"></div>
+  <pre class="cmd">west build -p -b esp32c5_devkitc/esp32c5/hpcore samples/hello_world
+west flash
+west espressif monitor</pre>
+  <pre><span class="p">*** Booting Zephyr OS ... ***</span>
+Hello World! esp32c5_devkitc/esp32c5</pre>
+  <ul>
+    <li><code class="inl">west espressif monitor</code> abre o console já na velocidade certa - não precisa configurar baud.</li>
+    <li>Porta diferente da detectada? <code class="inl">west espressif monitor -p /dev/ttyUSB1</code></li>
+    <li>Para sair: <strong>Ctrl+]</strong></li>
+  </ul>
+</section>
+
+<!-- 18 SERIAL GOTCHA -->
+<section class="slide">
+  <div class="kicker">A pegadinha número 1</div>
+  <h2 class="warn">Porta serial: <span class="u">UART0</span>, não USB-JTAG</h2>
+  <div class="rule"></div>
+  <ul class="warn">
+    <li>O ESP32-C5-DevKitC tem <strong>dois conectores USB</strong>. O console sai na UART0.</li>
+    <li>Nada no terminal depois de gravar? <strong>Tente o outro conector.</strong></li>
+    <li>Ainda nada? Provavelmente é <strong>cabo só de carga</strong> - troque.</li>
+    <li>Confirme sua porta <strong>agora</strong>, uma vez, e anote.</li>
+  </ul>
+</section>
+
+<!-- 19 DIV LAB2 -->
+<section class="slide divider">
+  <div class="num">02</div>
+  <h2>Devicetree + Kconfig</h2>
+  <p class="sub">A hora difícil - e a mais importante do dia.</p>
+</section>
+
+<!-- 20 LAB2a FAIL -->
+<section class="slide">
+  <div class="kicker">Lab 2a &middot; o gancho</div>
+  <h2>Vamos fazer o build <span class="u">falhar</span></h2>
+  <div class="rule"></div>
+  <pre class="cmd">west build -p -b esp32c5_devkitc/esp32c5/hpcore \
+  samples/sensor/die_temp_polling</pre>
+  <pre class="bad"><span class="e">error:</span> '__device_dts_ord_39' undeclared here</pre>
+  <p class="sub" style="margin-top:16px">Este é <strong>o erro mais comum do Zephyr</strong>. Ele quer dizer: você pediu um dispositivo que o build não criou.</p>
+</section>
+
+<!-- 21 LAB2a WHY -->
+<section class="slide">
+  <div class="kicker">Lab 2a &middot; por quê</div>
+  <h2>O nó existe... mas está <span class="u">desligado</span></h2>
+  <div class="rule"></div>
+  <pre><span class="c">/* in the SoC devicetree */</span>
+coretemp: coretemp@6000e058 {
+    compatible = <span class="s">"espressif,esp32-temp"</span>;
+    status = <span class="e">"disabled"</span>;   <span class="c">&lt;-- aqui</span>
+};</pre>
+  <ul>
+    <li>O sensor <strong>existe no silício</strong> e está descrito no devicetree.</li>
+    <li>Como está <code class="inl">disabled</code>, nenhum device é criado - e o código não linka.</li>
+  </ul>
+</section>
+
+<!-- 22 LAB2b MENTAL MODEL -->
+<section class="slide">
+  <div class="kicker">Lab 2b &middot; o modelo mental</div>
+  <h2>Fio ou chip? Recurso ligado?</h2>
+  <div class="rule"></div>
+  <div class="two">
+    <div class="card cyan">
+      <h3>Devicetree</h3>
+      <p>Descreve o <strong>hardware</strong>: o que existe e como está ligado (pinos, barramentos, endereços).</p>
+      <p style="margin-top:8px"><code class="inl">.dts</code> / <code class="inl">.overlay</code></p>
+    </div>
+    <div class="card red">
+      <h3>Kconfig</h3>
+      <p>Seleciona o <strong>software</strong>: quais subsistemas e drivers compilar.</p>
+      <p style="margin-top:8px"><code class="inl">prj.conf</code> / <code class="inl">CONFIG_*</code></p>
+    </div>
+  </div>
+  <p class="sub" style="margin-top:22px">Devicetree diz "o sensor existe". Kconfig diz "compile o driver dele".</p>
+</section>
+
+<!-- 23 LAB2c OVERLAY -->
+<section class="slide">
+  <div class="kicker">Lab 2c &middot; a solução</div>
+  <h2>Ligue o nó com um overlay</h2>
+  <div class="rule"></div>
+  <pre><span class="c">/* boards/esp32c5_devkitc_hpcore.overlay */</span>
+&amp;coretemp {
+    status = <span class="s">"okay"</span>;
+};</pre>
+  <ul>
+    <li>Três linhas. Não editamos nada do upstream.</li>
+    <li>O <code class="inl">&amp;coretemp</code> referencia um nó que <strong>já existe</strong> - só mudamos uma propriedade.</li>
+  </ul>
+</section>
+
+<!-- 24 LAB2c WORKS -->
+<section class="slide">
+  <div class="kicker">Lab 2c &middot; funciona</div>
+  <h2>Mesmo código, agora com o sensor ligado</h2>
+  <div class="rule"></div>
+  <pre class="cmd">west build -p -b esp32c5_devkitc/esp32c5/hpcore \
+  samples/sensor/die_temp_polling
+west flash
+west espressif monitor</pre>
+  <pre>CPU Die temperature[coretemp]: 34.2 °C
+CPU Die temperature[coretemp]: 34.3 °C</pre>
+  <p class="sub" style="margin-top:14px">Não mudamos <strong>uma linha</strong> do código do sample. Só descrevemos o hardware.</p>
+</section>
+
+<!-- 25 LAB2d KCONFIG -->
+<section class="slide">
+  <div class="kicker">Lab 2d &middot; a metade Kconfig</div>
+  <h2>Ligue (e desligue) o driver</h2>
+  <div class="rule"></div>
+  <pre><span class="c"># prj.conf</span>
+CONFIG_SENSOR=y</pre>
+  <ul>
+    <li>Remova <code class="inl">CONFIG_SENSOR</code>, recompile limpo: <strong>quebra</strong> (driver não compilado).</li>
+    <li>Devicetree disse que existe; Kconfig decide se o driver entra no binário.</li>
+  </ul>
+</section>
+
+<!-- 26 INSPECT GENERATED -->
+<section class="slide">
+  <div class="kicker">Fluxo de trabalho &middot; superpoder</div>
+  <h2>Inspecione o que foi <span class="u">gerado</span></h2>
+  <div class="rule"></div>
+  <pre><span class="k">build/zephyr/zephyr.dts</span>   <span class="c">devicetree final, já mesclado</span>
+<span class="k">build/zephyr/.config</span>     <span class="c">Kconfig final, já resolvido</span></pre>
+  <ul>
+    <li>"Meu overlay pegou?" &rarr; procure o nó em <code class="inl">zephyr.dts</code>. Se não está lá, <strong>o arquivo não foi lido</strong>.</li>
+    <li>"Esse CONFIG ficou ligado?" &rarr; procure em <code class="inl">.config</code>, não no <code class="inl">prj.conf</code>.</li>
+  </ul>
+  <p class="sub">Estes dois arquivos resolvem a maioria das dúvidas de devicetree e Kconfig.</p>
+</section>
+
+<!-- 27 LAB2g RGB LED -->
+<section class="slide">
+  <div class="kicker">Lab 2g &middot; o outro tipo de nó ausente</div>
+  <h2>O LED que a placa tem e o devicetree <span class="u">não descreve</span></h2>
+  <div class="rule"></div>
+  <pre class="cmd">west build -p -b esp32c5_devkitc/esp32c5/hpcore samples/drivers/led/led_strip \
+  -- -DCONFIG_SAMPLE_LED_UPDATE_DELAY=350
+west flash</pre>
+  <ul>
+    <li>No Lab 2 o nó <strong>existia e estava desligado</strong>. Aqui ele <strong>não existe</strong>: o <code class="inl">.dts</code> da placa só declara <code class="inl">sw0</code> e <code class="inl">watchdog0</code>.</li>
+    <li>Quem descreve o LED é um overlay <strong>do próprio sample</strong>, já na árvore: <code class="inl">boards/esp32c5_devkitc_hpcore.overlay</code>. Nada para escrever, e <strong>compila de primeira</strong> - ao contrário do 2a.</li>
+    <li>É um WS2812 endereçável no <strong>GPIO27</strong>, acionado por <strong>I2S + DMA</strong> - não é um pino que se liga e desliga.</li>
+    <li>Por isso o <code class="inl">blinky</code> continua sem compilar: ele quer um <code class="inl">led0</code> de GPIO, e este LED é um <code class="inl">led-strip</code>.</li>
+    <li>O <code class="inl">-D</code> depois do <code class="inl">--</code> sobrepõe um <strong>Kconfig do sample</strong> na hora do build: o default é 50 ms, e sem isso o LED pisca rápido demais.</li>
+  </ul>
+</section>
+
+<!-- 28 WHERE THE ORD MACRO COMES FROM -->
+<section class="slide">
+  <div class="kicker">Fluxo de trabalho &middot; fechando o circuito</div>
+  <h2>De onde vem a macro do <span class="u">erro</span></h2>
+  <div class="rule"></div>
+  <pre><span class="c">/* build/zephyr/include/generated/zephyr/devicetree_generated.h */</span>
+
+<span class="c">/* the alias is just a nickname for the node path */</span>
+<span class="k">#define</span> DT_N_ALIAS_die_temp0  DT_N_S_soc_S_coretemp_6000e058
+
+<span class="c">/* every node gets an ordinal - this is the 39 in the error */</span>
+<span class="k">#define</span> DT_N_S_soc_S_coretemp_6000e058_ORD  <span class="e">39</span></pre>
+  <ul>
+    <li>Todo nó do devicetree ganha um <strong>ordinal</strong>. O do <code class="inl">coretemp</code> é o 39.</li>
+    <li><code class="inl">__device_dts_ord_39</code> é o <strong>objeto <code>device</code></strong> desse nó. O nome do símbolo que faltou no link é só o ordinal com um prefixo.</li>
+  </ul>
+  <p class="sub" style="margin-top:12px">O número muda de árvore para árvore. O mecanismo, não.</p>
+</section>
+
+<!-- 29 ALIAS -> APP -> DRIVER -->
+<section class="slide">
+  <div class="kicker">Fluxo de trabalho &middot; fechando o circuito</div>
+  <h2>Do alias ao driver, em duas macros</h2>
+  <div class="rule"></div>
+  <pre><span class="c">/* application: samples/sensor/die_temp_polling */</span>
+IF_ENABLED(<span class="e">DT_NODE_EXISTS</span>(DT_ALIAS(die_temp0)),
+           (DEVICE_DT_GET(DT_ALIAS(die_temp0)),))
+
+<span class="c">/* driver: drivers/sensor/espressif/esp32_temp */</span>
+<span class="k">#define</span> DT_DRV_COMPAT espressif_esp32_temp
+<span class="k">DT_INST_FOREACH_STATUS_OKAY</span>(ESP32_TEMP_DEFINE);</pre>
+  <ul>
+    <li><code class="inl">DT_NODE_EXISTS</code> é <strong>verdadeiro mesmo com o nó desabilitado</strong>: ele só olha se o nó está na árvore. A aplicação segue e pede o device.</li>
+    <li><code class="inl">DT_INST_FOREACH_STATUS_OKAY</code> só percorre nós <code class="inl">okay</code>. Com o nó desligado, o driver <strong>nunca cria</strong> esse device.</li>
+  </ul>
+  <p class="sub" style="margin-top:12px">A aplicação pede um símbolo que o driver não definiu. É esse o erro do Lab 2a.</p>
+</section>
+
+<!-- 30 SOC DTSI -->
+<section class="slide">
+  <div class="kicker">De onde tudo isso vem</div>
+  <h2>O hardware descrito em <span class="u">texto</span></h2>
+  <div class="rule"></div>
+  <pre><span class="c">dts/riscv/espressif/esp32c5/esp32c5_common.dtsi              o SoC</span>
+    <span class="e">uart0</span>: uart@60000000 {                        <span class="c">rótulo: nome@endereço</span>
+        compatible = <span class="s">"espressif,esp32-uart"</span>;      <span class="c">qual driver opera isto</span>
+        reg = &lt;0x60000000 DT_SIZE_K(4)&gt;;          <span class="c">onde, e quantos bytes</span>
+        status = <span class="s">"disabled"</span>;                      <span class="c">o SoC descreve, não liga</span>
+        interrupts = &lt;UART0_INTR_SOURCE ...&gt;;     <span class="c">qual IRQ ele levanta</span>
+        interrupt-parent = &lt;&amp;intc&gt;;              <span class="c">quem trata essa IRQ</span>
+        clocks = &lt;&amp;clock ESP32_UART0_MODULE&gt;;    <span class="c">de qual clock depende</span>
+    };
+
+<span class="c">boards/espressif/esp32c5_devkitc/esp32c5_devkitc_hpcore.dts  a placa</span>
+    <span class="k">&amp;uart0</span> { status = <span class="s">"okay"</span>; };                   <span class="c">a placa liga o nó do SoC</span>
+    <span class="k">chosen</span>  { zephyr,console = &amp;<span class="e">uart0</span>; };        <span class="c">papel: quem é o console</span>
+    <span class="k">aliases</span> { sw0 = &amp;boot_button; };            <span class="c">apelido: nome fixo &rarr; nó</span></pre>
+</section>
+
+<!-- 31 LAYERING -->
+<section class="slide">
+  <div class="kicker">Fluxo de trabalho</div>
+  <h2>O princípio das camadas</h2>
+  <div class="rule"></div>
+  <div class="two">
+    <div class="card cyan">
+      <h3>Hardware</h3>
+      <p><code class="inl">SoC .dtsi</code> &rarr; <code class="inl">placa .dts</code> &rarr; <strong>seu .overlay</strong></p>
+    </div>
+    <div class="card red">
+      <h3>Software</h3>
+      <p><code class="inl">defconfig da placa</code> &rarr; <strong>seu prj.conf</strong> &rarr; <code class="inl">confs extra</code></p>
+    </div>
+  </div>
+  <p class="big" style="margin-top:28px">Você <span class="u">nunca</span> edita o upstream. Você sobrepõe camadas.</p>
+</section>
+
+<!-- 32 MENUCONFIG + BINDINGS -->
+<section class="slide">
+  <div class="kicker">Fluxo de trabalho</div>
+  <h2>Como descobrir o que existe</h2>
+  <div class="rule"></div>
+  <pre class="cmd">west build -t menuconfig   <span class="c"># navegar/buscar todos os CONFIG_*</span>
+west boards                <span class="c"># listar alvos de placa</span></pre>
+  <ul>
+    <li><strong>Bindings de devicetree</strong>: a documentação lista cada <code class="inl">compatible</code> e suas propriedades.</li>
+    <li><strong>Página da placa</strong> nos docs: periféricos suportados e pinagem.</li>
+    <li>Na árvore: <code class="inl">dts/bindings/</code> e <code class="inl">samples/</code> são as melhores referências.</li>
+  </ul>
+</section>
+
+<!-- 33 DIV LAB3 -->
+<section class="slide divider">
+  <div class="num">03</div>
+  <h2>Botão, interrupção e log</h2>
+  <p class="sub">Entrada por interrupção, não por polling. E logging de verdade.</p>
+</section>
+
+<!-- 34 LAB3 CONCEPT -->
+<section class="slide">
+  <div class="kicker">Lab 3 &middot; conceito</div>
+  <h2>Interrupção &gt; polling &middot; LOG &gt; printk</h2>
+  <div class="rule"></div>
+  <div class="two">
+    <div class="card cyan"><h3>GPIO por interrupção</h3><p>Um callback dispara no evento. A CPU não fica presa num laço ocupado esperando o botão.</p></div>
+    <div class="card red"><h3>Subsistema de log</h3><p><code class="inl">LOG_INF/WRN/ERR</code>: adiado, com níveis, filtrável por módulo. Prefira à <code class="inl">printk</code> crua.</p></div>
+  </div>
+  <p class="sub" style="margin-top:20px">Sem um <code class="inl">led0</code> de GPIO na placa, o console é o nosso dispositivo de saída aqui.</p>
+</section>
+
+<!-- 35 LAB3 CODE -->
+<section class="slide">
+  <div class="kicker">Lab 3 &middot; código</div>
+  <h2>O botão de boot já está no devicetree</h2>
+  <div class="rule"></div>
+  <pre><span class="c">/* sw0 = boot button, already described by the board */</span>
+<span class="k">static const struct</span> gpio_dt_spec button =
+    GPIO_DT_SPEC_GET(DT_ALIAS(sw0), gpios);
+
+gpio_pin_interrupt_configure_dt(&amp;button, GPIO_INT_EDGE_TO_ACTIVE);
+gpio_init_callback(&amp;button_cb, button_pressed, BIT(button.pin));
+gpio_add_callback(button.port, &amp;button_cb);
+
+<span class="c">/* in the callback */</span>
+<span class="k">LOG_INF</span>(<span class="s">"button pressed (#%u) at %u ms"</span>, count, k_uptime_get_32());</pre>
+</section>
+
+<!-- 36 DIV LAB4 -->
+<section class="slide divider">
+  <div class="num">04</div>
+  <h2>Threads e semáforo</h2>
+  <p class="sub">O modelo de execução do Zephyr, na prática.</p>
+</section>
+
+<!-- 37 EXEC MODEL -->
+<section class="slide">
+  <div class="kicker">Lab 4 &middot; modelo</div>
+  <h2>Threads, prioridade, dormir</h2>
+  <div class="rule"></div>
+  <ul>
+    <li><code class="inl">K_THREAD_DEFINE</code>: <strong>pilha</strong>, <strong>entrada</strong>, <strong>prioridade</strong> - as três coisas essenciais.</li>
+    <li><code class="inl">k_msleep(1000)</code> <strong>cede a CPU</strong>; não é espera ocupada.</li>
+    <li>Prioridade: número menor = prioridade maior.</li>
+    <li>Veja as threads vivas no shell: <code class="inl">kernel thread list</code>.</li>
+  </ul>
+</section>
+
+<!-- 38 ISR RULE -->
+<section class="slide">
+  <div class="kicker">Lab 4 &middot; regra de ouro</div>
+  <h2>Numa ISR: <span class="u">sinalize e saia</span></h2>
+  <div class="rule"></div>
+  <p class="big">O trabalho lento é da thread, não da interrupção.</p>
+  <p class="sub" style="margin-top:24px">O callback do botão só dá <code class="inl">k_sem_give()</code>. A thread trabalhadora acorda no <code class="inl">k_sem_take()</code> e faz o resto. Esse é o padrão ISR-para-thread.</p>
+</section>
+
+<!-- 39 LAB4 CODE -->
+<section class="slide">
+  <div class="kicker">Lab 4 &middot; código</div>
+  <h2>Semáforo entre ISR e thread</h2>
+  <div class="rule"></div>
+  <pre><span class="k">K_SEM_DEFINE</span>(button_sem, 0, 1);
+
+<span class="k">static void</span> worker(<span class="k">void</span> *a, <span class="k">void</span> *b, <span class="k">void</span> *c) {
+    <span class="k">while</span> (1) {
+        k_sem_take(&amp;button_sem, K_FOREVER);
+        LOG_INF(<span class="s">"worker woke up from the button ISR"</span>);
+    }
+}
+<span class="k">K_THREAD_DEFINE</span>(worker_id, 1024, worker, NULL,NULL,NULL, 5,0,0);
+
+<span class="c">/* in the button callback: just this */</span>
+k_sem_give(&amp;button_sem);</pre>
+</section>
+
+<!-- 40 DIV LAB5 -->
+<section class="slide divider">
+  <div class="num">05</div>
+  <h2>Shell</h2>
+  <p class="sub">Um comando seu no console. Barato e impressiona.</p>
+</section>
+
+<!-- 41 LAB5 CODE -->
+<section class="slide">
+  <div class="kicker">Lab 5</div>
+  <h2>Um comando que lê o sensor</h2>
+  <div class="rule"></div>
+  <pre><span class="k">static int</span> cmd_temp(<span class="k">const struct</span> shell *sh, <span class="k">size_t</span> argc, <span class="k">char</span> **argv) {
+    <span class="k">struct</span> sensor_value val;
+
+    sensor_sample_fetch(temp_dev);
+    sensor_channel_get(temp_dev, SENSOR_CHAN_DIE_TEMP, &amp;val);
+    shell_print(sh, <span class="s">"die temperature: %d.%02d C"</span>, val.val1, val.val2 / 10000);
+    <span class="k">return</span> 0;
+}
+<span class="k">SHELL_CMD_REGISTER</span>(temp, NULL, <span class="s">"Read the SoC die temperature"</span>, cmd_temp);</pre>
+  <ul>
+    <li>No console: <code class="inl">temp</code>, <code class="inl">help</code>, <code class="inl">device list</code>, <code class="inl">kernel thread list</code>.</li>
+  </ul>
+</section>
+
+<!-- 42 DIV LAB6 -->
+<section class="slide divider">
+  <div class="num">06</div>
+  <h2>Tudo junto</h2>
+  <p class="sub">Tudo do dia numa aplicação só.</p>
+</section>
+
+<!-- 43 LAB6 WHAT -->
+<section class="slide">
+  <div class="kicker">Lab 6 &middot; o que junta</div>
+  <h2>Uma aplicação, seis conceitos</h2>
+  <div class="rule"></div>
+  <div class="two">
+    <div class="card cyan"><h3>Devicetree</h3><p>o sensor ligado pelo seu overlay</p></div>
+    <div class="card red"><h3>Kconfig</h3><p>sensor, shell e log ligados</p></div>
+    <div class="card cyan"><h3>Threads</h3><p>uma thread amostra a cada segundo</p></div>
+    <div class="card red"><h3>Sincronização</h3><p>um mutex protege as estatísticas</p></div>
+    <div class="card cyan"><h3>Interrupção</h3><p>o botão força uma leitura</p></div>
+    <div class="card green"><h3>Shell</h3><p><code class="inl">temp</code> e <code class="inl">temp stats</code></p></div>
+  </div>
+</section>
+
+<!-- 44 LAB6 RUN -->
+<section class="slide">
+  <div class="kicker">Lab 6 &middot; rodando</div>
+  <h2>O resultado</h2>
+  <div class="rule"></div>
+  <pre>uart:~$ temp
+die temperature: 34.85 C
+
+uart:~$ temp stats
+samples: 128
+min: 33.90 C
+max: 36.15 C</pre>
+  <ul>
+    <li>Aperte o botão: a thread acorda na hora e loga uma leitura extra.</li>
+  </ul>
+</section>
+
+<!-- 45 LOG RUNTIME -->
+<section class="slide">
+  <div class="kicker">Lab 6b &middot; log não é printk</div>
+  <h2>Ligue e desligue log <span class="u">sem recompilar</span></h2>
+  <div class="rule"></div>
+  <pre>uart:~$ <span class="k">log status</span>
+uart:~$ <span class="k">log disable</span> tempmon     <span class="c">cala esse modulo</span>
+uart:~$ <span class="k">log enable</span> dbg tempmon  <span class="c">e agora fala tudo</span></pre>
+  <ul>
+    <li><code class="inl">LOG_MODULE_REGISTER(tempmon, ...)</code> dá um <strong>nome</strong> ao módulo. É esse nome que o shell filtra.</li>
+    <li>Quatro níveis: <code class="inl">err</code>, <code class="inl">wrn</code>, <code class="inl">inf</code>, <code class="inl">dbg</code>. Em runtime, por módulo.</li>
+    <li>O runtime só desce até onde a compilação deixou: <code class="inl">CONFIG_LOG_DEFAULT_LEVEL</code> define o piso do binário.</li>
+    <li>Num produto: você deixa a instrumentação no código e liga só o módulo sob investigação, na máquina do cliente.</li>
+  </ul>
+</section>
+
+<!-- 46 DIV TWISTER -->
+<section class="slide divider">
+  <h2>Testes</h2>
+  <p class="sub">Você acabou de escrever um app de verdade. Como saber amanhã que ele ainda funciona?</p>
+</section>
+
+<!-- 47 TWISTER WHY -->
+<section class="slide">
+  <div class="kicker">Depois do Lab 6</div>
+  <h2>E amanhã, como você sabe que ainda <span class="u">funciona</span>?</h2>
+  <div class="rule"></div>
+  <div class="two">
+    <div class="card cyan">
+      <h3>O problema de produto</h3>
+      <p>Uma aplicação real tem várias configurações (com shell, sem shell, com BLE) e roda em mais de uma placa. Testar tudo à mão não escala.</p>
+    </div>
+    <div class="card red">
+      <h3>Twister</h3>
+      <p>O runner de testes do próprio Zephyr. Compila e executa N configurações em M plataformas e diz o que quebrou.</p>
+    </div>
+  </div>
+  <ul>
+    <li>Você <strong>declara</strong> o critério de sucesso num <code class="inl">sample.yaml</code> ou <code class="inl">testcase.yaml</code>, ao lado do código.</li>
+    <li>Com <code class="inl">native_sim</code> ele roda <strong>sem placa nenhuma</strong> - é isso que torna CI viável.</li>
+  </ul>
+</section>
+
+<!-- 48 TWISTER IN PRACTICE -->
+<section class="slide">
+  <div class="kicker">Twister &middot; na prática</div>
+  <h2>O critério de sucesso vira um arquivo</h2>
+  <div class="rule"></div>
+  <div class="two">
+    <div>
+      <pre><span class="c"># sample.yaml, ao lado do main.c</span>
+common:
+  harness: <span class="k">console</span>
+  harness_config:
+    type: multi_line
+    regex:
+      - <span class="s">"heartbeat: up for 0 ms"</span>
+tests:
+  workshop.lab4.threads:
+    platform_allow: [<span class="k">native_sim</span>]</pre>
+    </div>
+    <div>
+      <pre class="cmd">west twister \
+  -T labs/lab4-threads \
+  -p native_sim</pre>
+      <pre><span class="p">1/1 native_sim/native</span>
+workshop.lab4.threads
+  <span class="s">PASSED</span> (native 3.622s)</pre>
+    </div>
+  </div>
+  <ul>
+    <li><code class="inl">harness: console</code> casa a saída com regex. Para testes unitários, use <code class="inl">ztest</code>.</li>
+  </ul>
+</section>
+
+<!-- 49 DIV PRODUTO -->
+<section class="slide divider">
+  <h2>Levando para o produto</h2>
+  <p class="sub">Sair do sample e virar um repositório seu: manifesto, out-of-tree e módulos.</p>
+</section>
+
+<!-- 50 OUT OF TREE -->
+<section class="slide">
+  <div class="kicker">Depois do workshop</div>
+  <h2>A sua própria aplicação</h2>
+  <div class="rule"></div>
+  <ul>
+    <li>Não deixe seu projeto dentro de <code class="inl">zephyr/samples/</code> - ele some no próximo update.</li>
+    <li>Crie a pasta onde quiser, com os 4 arquivos do slide de anatomia.</li>
+  </ul>
+  <pre class="cmd">mkdir -p ~/meus-projetos/minha-app
+<span class="c"># CMakeLists.txt, prj.conf, src/main.c, boards/*.overlay</span>
+west build -p -b esp32c5_devkitc/esp32c5/hpcore ~/meus-projetos/minha-app</pre>
+</section>
+
+<!-- 51 WORKSPACE TOPOLOGIES -->
+<section class="slide">
+  <div class="kicker">Levando para o produto</div>
+  <h2>Onde o seu repositório se encaixa</h2>
+  <div class="rule"></div>
+  <div class="steps">
+    <div class="st"><span class="i">T1</span><b>O Zephyr é o manifesto</b><span class="d">É o que fizemos hoje: a sua aplicação vive dentro da árvore do Zephyr. Ótimo para aprender. Ruim para produto - o seu código some no próximo <code>west update</code>.</span></div>
+    <div class="st key"><span class="i">T2</span><b>A sua aplicação é o manifesto</b><span class="d">O <strong>seu</strong> repositório tem o <code>west.yml</code> e importa o Zephyr como projeto. É o padrão de produto: um clone, uma versão fixada, CI reprodutível.</span></div>
+    <div class="st"><span class="i">T3</span><b>Floresta</b><span class="d">Um repositório de manifesto separado orquestra várias aplicações e o Zephyr. Para organizações com mais de um produto na mesma base.</span></div>
+  </div>
+  <p class="sub" style="margin-top:14px">Sair do T1 é a primeira decisão de engenharia depois deste workshop.</p>
+</section>
+
+<!-- 52 CUSTOM MANIFEST -->
+<section class="slide">
+  <div class="kicker">Levando para o produto &middot; T2</div>
+  <h2>Um <code class="inl">west.yml</code> seu</h2>
+  <div class="rule"></div>
+  <pre><span class="c"># west.yml na raiz do SEU repositorio</span>
+manifest:
+  projects:
+    - name: zephyr
+      url: https://github.com/zephyrproject-rtos/zephyr
+      <span class="k">revision: main</span>        <span class="c"># ou v4.4.2 para fixar</span>
+      import:
+        <span class="k">name-allowlist:</span>    <span class="c"># clone only what you use</span>
+          - hal_espressif
+  <span class="k">self:</span>
+    path: minha-app</pre>
+  <ul>
+    <li><code class="inl">revision:</code> aceita branch ou tag. <strong>main</strong> acompanha o upstream; uma tag como <code class="inl">v4.4.2</code> congela, e é o que um produto usa - senão o build de hoje e o de amanhã não são o mesmo build.</li>
+    <li><code class="inl">name-allowlist</code> derruba o clone de ~40 repositórios para os que você usa.</li>
+  </ul>
+</section>
+
+<!-- 53 WEST INIT -m -->
+<section class="slide">
+  <div class="kicker">Levando para o produto &middot; T2</div>
+  <h2>O seu repo vira o workspace</h2>
+  <div class="rule"></div>
+  <pre class="cmd">west init -m https://github.com/voce/seu-produto ~/ws
+cd ~/ws &amp;&amp; west update</pre>
+  <pre><span class="k">~/ws/</span>
+<span class="k">  .west/</span>        <span class="c">configuração do workspace</span>
+<span class="k">  minha-app/</span>    <span class="c">o SEU repositório, com o west.yml</span>
+<span class="k">  zephyr/</span>       <span class="c">importado, na revision que você fixou</span>
+<span class="k">  modules/</span>      <span class="c">só os do allowlist</span></pre>
+  <ul>
+    <li>O seu repositório passa a ser a raiz. O Zephyr vira <strong>dependência</strong>, não hospedeiro.</li>
+    <li><code class="inl">west update</code> recoloca todo mundo na revisão do manifesto. É o comando da reprodutibilidade.</li>
+  </ul>
+</section>
+
+<!-- 54 IMPORTING A MODULE -->
+<section class="slide">
+  <div class="kicker">Levando para o produto</div>
+  <h2>Importar um módulo seu</h2>
+  <div class="rule"></div>
+  <div class="two">
+    <div>
+      <pre><span class="c"># 1. no seu west.yml</span>
+projects:
+  - name: meu_driver
+    url: https://github.com/voce/meu-driver
+    revision: v1.2.0
+    path: modules/meu_driver</pre>
+    </div>
+    <div>
+      <pre><span class="c"># 2. no repo do modulo:</span>
+<span class="c">#    zephyr/module.yml</span>
+build:
+  cmake: .
+  kconfig: Kconfig
+settings:
+  <span class="k">board_root</span>: .
+  <span class="k">dts_root</span>: .</pre>
+    </div>
+  </div>
+  <ul>
+    <li>O <code class="inl">zephyr/module.yml</code> é o que transforma um repositório qualquer em módulo Zephyr.</li>
+    <li><code class="inl">settings:</code> com <code class="inl">board_root</code> / <code class="inl">dts_root</code> / <code class="inl">soc_root</code> é como você registra <strong>placas e bindings próprios</strong>.</li>
+    <li>Para testar rápido, sem mexer no manifesto: <code class="inl">-DEXTRA_ZEPHYR_MODULES=/caminho/do/modulo</code></li>
+  </ul>
+</section>
+
+<!-- 55 DIV BOOTLOADER -->
+<section class="slide divider">
+  <h2>Bootloader</h2>
+  <p class="sub">Antes do seu main() existir, alguém já decidiu qual imagem carregar.</p>
+</section>
+
+<!-- 56 BOOT PATHS -->
+<section class="slide">
+  <div class="kicker">Quem salta para quem</div>
+  <h2>Da ROM até a sua <span class="u">aplicação</span></h2>
+  <div class="rule"></div>
+  <svg class="bootsvg" viewBox="0 0 880 352" role="img"
+       aria-label="A ROM do chip salta para a aplicação, ou para o MCUboot, que escolhe entre dois slots">
+    <defs>
+      <marker id="ah" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="9" markerHeight="9"
+              orient="auto-start-reverse"><path d="M 0 1 L 11 6 L 0 11 z" fill="#93a3a6"/></marker>
+    </defs>
+
+    <g class="wire">
+      <path d="M 190 170 H 245" />
+      <path d="M 245 70 V 270" />
+      <path d="M 245 70 H 292" marker-end="url(#ah)" />
+      <path d="M 245 270 H 292" marker-end="url(#ah)" />
+      <path d="M 520 270 H 572" />
+      <path d="M 572 233 V 311" />
+      <path d="M 572 233 H 616" marker-end="url(#ah)" />
+      <path d="M 572 311 H 616" marker-end="url(#ah)" />
+    </g>
+
+    <g class="box rom">
+      <rect x="10" y="130" width="180" height="80" rx="12" />
+      <text class="t" x="100" y="163">ROM do chip</text>
+      <text class="m" x="100" y="187">fixa no silício</text>
+    </g>
+
+    <text class="route green" x="292" y="18">sem 2º estágio</text>
+    <g class="box app">
+      <rect x="292" y="30" width="572" height="80" rx="12" />
+      <text class="t" x="578" y="63">sua aplicação</text>
+      <text class="m" x="578" y="87">0x2000 &#183; até o fim da flash, ~8 MB</text>
+    </g>
+
+    <text class="route amber" x="292" y="218">com 2º estágio</text>
+    <g class="box boot">
+      <rect x="292" y="230" width="228" height="80" rx="12" />
+      <text class="t" x="406" y="263">MCUboot</text>
+      <text class="m" x="406" y="287">0x2000 &#183; 56 KB</text>
+    </g>
+
+    <g class="box slot">
+      <rect x="616" y="205" width="248" height="56" rx="10" />
+      <text class="t" x="740" y="228">image-0</text>
+      <text class="m" x="740" y="248">slot0 &#183; 0x20000 &#183; 3840 KB</text>
+    </g>
+    <g class="box slot">
+      <rect x="616" y="283" width="248" height="56" rx="10" />
+      <text class="t" x="740" y="306">image-1</text>
+      <text class="m" x="740" y="326">slot1 &#183; 0x3e0000 &#183; 3840 KB</text>
+    </g>
+    <text class="or" x="740" y="277">ou</text>
+  </svg>
+  <ul>
+    <li><strong>Dois slots</strong> é o que torna OTA seguro: grava no slot livre e volta atrás se a imagem nova não subir.</li>
+    <li><strong>Pegadinha:</strong> a placa aponta <code class="inl">code-partition = &amp;slot0_partition</code> sempre, mas em simple boot o SoC ignora isso e usa o <code class="inl">boot_partition</code> - há um <code class="inl">if</code> explícito no CMake do SoC.</li>
+  </ul>
+</section>
+
+<!-- 57 SIMPLE BOOT VS MCUBOOT -->
+<section class="slide">
+  <div class="kicker">Os três casos de build</div>
+  <h2>Simple boot ou <span class="u">MCUboot</span>?</h2>
+  <div class="rule"></div>
+  <div class="fx one">
+    <div class="row"><div class="sym">CONFIG_ESP_SIMPLE_BOOT=y</div><div class="fix">uma imagem só, sem 2º estágio. Liga sozinho quando você <strong>não</strong> pede MCUboot.</div></div>
+    <div class="row"><div class="sym">CONFIG_MCUBOOT=y</div><div class="fix">o que você está compilando <strong>é</strong> o bootloader.</div></div>
+    <div class="row"><div class="sym">CONFIG_BOOTLOADER_MCUBOOT=y</div><div class="fix">é a <strong>app</strong> que ele vai carregar. Puxa <code>USE_DT_CODE_PARTITION</code>, e é isso que a linka dentro do slot0.</div></div>
+  </div>
+  <ul>
+    <li>O help do próprio Kconfig é explícito: simple boot sobe o sistema com as memórias prontas, mas <strong>sem secure boot, sem OTA e sem gestão de slots</strong>.</li>
+    <li>O custo é medível: em simple boot a app tem a flash inteira (~8 MB); com MCUboot ela cabe no slot0 e cai para <strong>3840 KB</strong>, porque agora moram lá dois slots e o bootloader.</li>
+  </ul>
+</section>
+
+<!-- 58 SYSBUILD -->
+<section class="slide">
+  <div class="kicker">Duas imagens, um comando</div>
+  <h2>Compilando com <span class="u">sysbuild</span></h2>
+  <div class="rule"></div>
+  <pre class="cmd">west build -p -b esp32c5_devkitc/esp32c5/hpcore samples/hello_world <span class="k">--sysbuild</span></pre>
+  <pre>Completed <span class="s">'mcuboot'</span>
+Completed <span class="s">'hello_world'</span>
+
+build/<span class="e">mcuboot</span>/zephyr/zephyr.bin              35 KB   <span class="c">o bootloader</span>
+build/<span class="e">hello_world</span>/zephyr/zephyr.signed.bin  131 KB   <span class="c">a app, assinada</span></pre>
+  <ul>
+    <li>Sem <code class="inl">--sysbuild</code> sai <strong>um</strong> binário e o simple boot assume. Com ele saem <strong>dois</strong>, e o segundo já vem assinado.</li>
+    <li>Você não escreveu nenhum <code class="inl">CONFIG_</code>: o sysbuild ligou <code class="inl">BOOTLOADER_MCUBOOT</code> e <code class="inl">USE_DT_CODE_PARTITION</code> na app sozinho.</li>
+    <li>É o mesmo <code class="inl">west flash</code> depois - ele grava as duas imagens, cada uma no seu offset.</li>
+  </ul>
+</section>
+
+<!-- 59 DIV LAB7 -->
+<section class="slide divider">
+  <div class="num">07</div>
+  <h2>Wi-Fi</h2>
+  <p class="sub">O rádio principal do C5, sem precisar de mais nada.</p>
+</section>
+
+<!-- 60 WIFI -->
+<section class="slide">
+  <div class="kicker">Lab 7</div>
+  <h2>Do scan até a <span class="u">internet</span></h2>
+  <div class="rule"></div>
+  <pre class="cmd">west build -p -b esp32c5_devkitc/esp32c5/hpcore samples/net/wifi/shell
+west flash &amp;&amp; west espressif monitor</pre>
+  <pre>uart:~$ <span class="k">wifi scan</span>              <span class="c">quais redes existem</span>
+uart:~$ <span class="k">wifi connect</span> -s <span class="s">"REDE"</span> -k 1 -p <span class="s">"senha"</span>
+uart:~$ <span class="k">wifi status</span>            <span class="c">conectou? qual o IP?</span>
+uart:~$ <span class="k">net ping</span> -c 3 1.1.1.1  <span class="c">alcanca a internet?</span></pre>
+  <ul>
+    <li><code class="inl">-k 1</code> é WPA2-PSK; para rede aberta, use <code class="inl">-k 0</code> e nada de <code class="inl">-p</code>.</li>
+    <li>O IP vem por <strong>DHCP</strong>, já ligado no sample. Sem IP, o ping nem sai.</li>
+    <li>Precisa dos blobs: <code class="inl">west blobs fetch hal_espressif</code> (feito no pré-work).</li>
+  </ul>
+</section>
+
+<!-- 61 DIV LAB8 -->
+<section class="slide divider">
+  <div class="num">08</div>
+  <h2>BLE</h2>
+  <p class="sub">O dia inteiro a saída foi o console. Agora a placa fala com o seu celular.</p>
+</section>
+
+<!-- 62 BLE PAYLOAD -->
+<section class="slide">
+  <div class="kicker">Lab 8</div>
+  <h2>A temperatura no seu <span class="u">celular</span></h2>
+  <div class="rule"></div>
+  <pre class="cmd">west build -p -b esp32c5_devkitc/esp32c5/hpcore labs/lab8-ble
+west flash &amp;&amp; west espressif monitor</pre>
+  <pre><span class="c">&lt;inf&gt; ble_temp: advertising as Espressif-c3d6</span>
+
+Manufacturer data:  <span class="k">FF FF</span> <span class="e">9D 0D</span>
+                    <span class="k">company ID</span>  <span class="e">0x0D9D = 3485 -&gt; 34.85 C</span></pre>
+  <ul>
+    <li>Sem conexão e sem pareamento: o dado vive no <strong>anúncio</strong>, que qualquer scanner lê.</li>
+    <li>O anúncio cabe em <strong>31 bytes</strong>, e você monta byte a byte no vetor <code class="inl">ad[]</code>.</li>
+    <li>Nome = <code class="inl">CONFIG_BT_DEVICE_NAME</code> + os 2 últimos bytes do endereço. <strong>Ponha o seu</strong> no <code class="inl">prj.conf</code>: o sufixo separa dois xarás.</li>
+    <li>Fora do chip, byte order importa: <code class="inl">sys_cpu_to_le16()</code>.</li>
+  </ul>
+</section>
+
+<!-- 63 DIV LAB9 -->
+<section class="slide divider">
+  <div class="num">09</div>
+  <h2>Atualização pelo ar</h2>
+  <p class="sub">Trocar o firmware sem tocar na placa - e desfazer se der errado.</p>
+</section>
+
+<!-- 64 LAB9 PANORAMA -->
+<section class="slide">
+  <div class="kicker">Lab 9 &middot; o panorama</div>
+  <h2>O que o Zephyr j&aacute; tem para <span class="u">OTA</span></h2>
+  <div class="rule"></div>
+  <div class="fx one">
+    <div class="row"><div class="sym">mcumgr / SMP</div><div class="fix">O mais usado. O grupo <code>img_mgmt</code> recebe a imagem. Transportes: BLE, UART, shell, SPI, UDP e LoRaWAN. <strong>Nenhum deles &eacute; HTTP.</strong></div></div>
+    <div class="row"><div class="sym">hawkBit / UpdateHub</div><div class="fix">Clientes de servi&ccedil;o de gest&atilde;o de frota. S&atilde;o HTTP, mas falam a API do servidor (a DDI, no hawkBit): voc&ecirc; sobe a infra junto.</div></div>
+    <div class="row"><div class="sym">LwM2M</div><div class="fix">Objeto 5 de firmware update, com variante <code>_pull</code>. Precisa de um servidor LwM2M.</div></div>
+    <div class="row"><div class="sym">USB DFU</div><div class="fix">Funciona e &eacute; simples, mas exige cabo. Derrota o "pelo ar".</div></div>
+  </div>
+  <ul>
+    <li>Todos resolvem o mesmo problema, e todos trazem um <strong>protocolo de ger&ecirc;ncia ou um servidor</strong> no pacote.</li>
+    <li>O Zephyr j&aacute; d&aacute; as pe&ccedil;as <strong>soltas</strong>: <code class="inl">subsys/dfu/img_util</code> escreve no outro slot, <code class="inl">subsys/dfu/boot</code> pede a troca e confirma, e <code class="inl">http_client</code> baixa.</li>
+    <li><strong>O que n&atilde;o existe upstream &eacute; a cola</strong>: "pegue esta URL e jogue no slot". S&atilde;o poucas linhas, e ningu&eacute;m as manteve na &aacute;rvore. Da&iacute; o <code class="inl">ota_http</code> ser um m&oacute;dulo <strong>externo</strong>.</li>
+  </ul>
+</section>
+
+<!-- 65 LAB9 MANIFESTO -->
+<section class="slide">
+  <div class="kicker">Lab 9 &middot; o manifesto</div>
+  <h2>Trazendo um módulo para o <span class="u">seu</span> projeto</h2>
+  <div class="rule"></div>
+  <pre class="cmd"><span class="c"># west.yml na raiz do SEU repositorio</span>
+manifest:
+  projects:
+    - name: zephyr
+      url: https://github.com/zephyrproject-rtos/zephyr
+      revision: main          <span class="c"># ou v4.4.2 para congelar</span>
+      import:
+        name-allowlist: [hal_espressif, mcuboot, cmsis, mbedtls]
+
+    - name: zephyr-workshop-2026
+      url: https://github.com/sylvioalves/zephyr-workshop-2026
+      revision: main
+      path: modules/zephyr-workshop-2026</pre>
+  <ul>
+    <li>Este <code class="inl">west.yml</code> é só um <strong>exemplo</strong>: é assim que o <code class="inl">ota_http</code> entraria num projeto seu. No lab de hoje ele entra por <code class="inl">EXTRA_ZEPHYR_MODULES</code>, e nada desta tela precisa rodar.</li>
+    <li>O west clona o repositório <strong>inteiro</strong> no <code class="inl">path</code>, e o Zephyr procura <code class="inl">zephyr/module.yml</code> na <strong>raiz</strong> dele.</li>
+    <li>Depois: <code class="inl">west init -m &lt;seu-repo&gt;</code> e <code class="inl">west update</code>.</li>
+  </ul>
+</section>
+
+<!-- 66 LAB9 SERVIDOR -->
+<section class="slide">
+  <div class="kicker">Lab 9 &middot; a sala</div>
+  <h2>Quem serve a <span class="u">imagem</span></h2>
+  <div class="rule"></div>
+  <pre class="cmd"><span class="c"># na maquina do instrutor, uma vez</span>
+./scripts/publicar-ota.py build/lab9-ota</pre>
+  <pre>imagem : build/lab9-ota/zephyr/<span class="e">zephyr.signed.bin</span>
+versao : <span class="s">2.0.0</span>
+tamanho: 737452 bytes (720 KB)
+
+na placa, digite:
+
+    <span class="k">ota download</span> http://<span class="e">192.168.0.10</span>:8000/lab9.signed.bin</pre>
+  <ul>
+    <li>O arquivo &eacute; o mesmo <code class="inl">zephyr.signed.bin</code> do slide do sysbuild, s&oacute; republicado com nome curto.</li>
+    <li>O script l&ecirc; a <strong>vers&atilde;o no header do MCUboot</strong> antes de servir: voc&ecirc; sabe o que est&aacute; publicando.</li>
+    <li>O servidor &eacute; multi-thread, a sala inteira baixa junto. O <strong>IP vai no projetor</strong>.</li>
+    <li>Placa e servidor na <strong>mesma rede</strong>, e a porta liberada no firewall: <code class="inl">sudo ufw allow 8000/tcp</code>.</li>
+  </ul>
+</section>
+
+<!-- 67 LAB9 CICLO -->
+<section class="slide">
+  <div class="kicker">Lab 9 &middot; o ciclo</div>
+  <h2>Baixa, testa e <span class="u">volta atrás</span></h2>
+  <div class="rule"></div>
+  <pre class="cmd">uart:~$ ota download http://&lt;servidor&gt;:8000/lab9.signed.bin
+  100%  (737452 / 737452 bytes)
+uart:~$ ota apply        <span class="c">sem "permanent": entra em teste</span>
+uart:~$ ota reboot       <span class="c">sobe a nova</span>
+uart:~$ ota status       <span class="c">UNCONFIRMED</span>
+uart:~$ ota reboot       <span class="c">sem confirmar -&gt; REVERTE</span></pre>
+  <ul>
+    <li>O SSID e a senha vêm do <code class="inl">prj.conf</code>: a placa entra na rede sozinha no boot.</li>
+    <li>A imagem vai para o slot que o bootloader <strong>não</strong> está usando. Só o <code class="inl">apply</code> pede a troca.</li>
+    <li><strong>Não confirmar é o caminho da reversão.</strong> É isso que torna atualizar em campo seguro.</li>
+    <li>Com <code class="inl">ota apply permanent</code> ou <code class="inl">ota confirm</code>, a nova fica.</li>
+  </ul>
+</section>
+
+<!-- 68 LAB9 SWAP -->
+<section class="slide">
+  <div class="kicker">Lab 9 &middot; por dentro</div>
+  <h2>O que o MCUboot faz no <span class="u">swap</span></h2>
+  <div class="rule"></div>
+  <div class="fx one">
+    <div class="row"><div class="sym">1. sobe um setor</div><div class="fix">Move <strong>todos</strong> os setores do slot0 uma posi&ccedil;&atilde;o para cima. &Eacute; por isso que o slot0 precisa de um setor extra.</div></div>
+    <div class="row"><div class="sym">2. desce o novo</div><div class="fix">Copia o setor N do slot1 para o setor N do slot0.</div></div>
+    <div class="row"><div class="sym">3. guarda o velho</div><div class="fix">Copia o setor N+1 do slot0 para o setor N do slot1. A imagem antiga vai sendo salva enquanto a nova entra.</div></div>
+    <div class="row"><div class="sym">4. repete</div><div class="fix">Passos 2 e 3, setor a setor, at&eacute; o fim. Nenhuma parti&ccedil;&atilde;o de scratch envolvida.</div></div>
+  </div>
+  <ul>
+    <li>Cada passo fica registrado na <strong>swap status area</strong>: se cair a energia no meio, o bootloader retoma de onde parou.</li>
+    <li><strong>Reverter &eacute; o mesmo swap de novo.</strong> N&atilde;o h&aacute; c&oacute;pia extra a fazer, e &eacute; por isso que n&atilde;o confirmar sai de gra&ccedil;a.</li>
+    <li>O pre&ccedil;o: <code class="inl">imagem-maxima = (N-1) * setor - trailer</code>. Um setor do slot0 nunca guarda c&oacute;digo.</li>
+    <li>A doc do MCUboot j&aacute; prefere <code class="inl">swap-using-offset</code> para projeto novo; usamos <code class="inl">move</code> por ser o mais rodado em campo.</li>
+  </ul>
+</section>
+
+<!-- 69 WEST TOOLBOX + DEBUG -->
+<section class="slide">
+  <div class="kicker">Depois do workshop</div>
+  <h2>A caixa de ferramentas</h2>
+  <div class="rule"></div>
+  <div class="two">
+    <div>
+      <div class="oglabel" style="margin-bottom:8px">west</div>
+      <pre><span class="k">west build</span>   compilar
+<span class="k">west flash</span>   gravar
+<span class="k">west espressif monitor</span>
+             abrir o console
+<span class="k">west debug</span>   GDB + OpenOCD
+<span class="k">west boards</span>  listar alvos
+<span class="k">west blobs</span>   binários de RF
+<span class="k">west update</span>  sincronizar módulos</pre>
+    </div>
+    <div>
+      <div class="oglabel" style="margin-bottom:8px">depuração</div>
+      <pre><span class="k">LOG_LEVEL</span>       filtrar por módulo
+<span class="k">device list</span>     dispositivos prontos
+<span class="k">kernel thread list</span>  pilhas e estados
+<span class="k">zephyr.dts</span>      devicetree final
+<span class="k">.config</span>         Kconfig final</pre>
+    </div>
+  </div>
+</section>
+
+<!-- 70 FAILURES -->
+<section class="slide">
+  <div class="kicker">Quando travar</div>
+  <h2>Falhas comuns e correções</h2>
+  <div class="rule"></div>
+  <div class="fx">
+    <div class="row"><div class="sym">Nada no console</div><div class="fix">porta errada &rarr; troque o conector USB, 115200</div></div>
+    <div class="row"><div class="sym">west flash não abre a porta</div><div class="fix">cabo de carga, ou driver/permissão</div></div>
+    <div class="row"><div class="sym">__device_dts_ord_NN</div><div class="fix">nó desabilitado ou ausente &rarr; overlay</div></div>
+    <div class="row"><div class="sym">Overlay ignorado</div><div class="fix">nome do arquivo, e <code>-p</code></div></div>
+    <div class="row"><div class="sym">Driver faltando no link</div><div class="fix">falta <code>CONFIG_*</code> no prj.conf</div></div>
+    <div class="row"><div class="sym">Alvo de placa inválido</div><div class="fix">use <code>/esp32c5/hpcore</code></div></div>
+    <div class="row"><div class="sym">Link de Wi-Fi falha</div><div class="fix"><code>west blobs fetch hal_espressif</code></div></div>
+    <div class="row"><div class="sym">Mudança não fez efeito</div><div class="fix">build suja &rarr; <code>-p</code></div></div>
+  </div>
+</section>
+
+<!-- 71 DEFERRED -->
+<section class="slide">
+  <div class="kicker">O mapa</div>
+  <h2>O que ficou de fora (de propósito)</h2>
+  <div class="rule"></div>
+  <ul>
+    <li>Escrita de drivers e bindings próprios</li>
+    <li>Gerenciamento de energia / low power</li>
+    <li>User mode e domínios de memória</li>
+    <li>OTA e DFU na prática: assinatura de imagem, servidor e rollback</li>
+    <li>Sysbuild, e o Twister além do <code class="inl">harness: console</code> (ztest, cobertura, hardware map)</li>
+    <li>BLE além do anúncio: GATT, conexão e pareamento</li>
+    <li>IPC avançado (zbus), Thread/802.15.4 e internals de rede</li>
+  </ul>
+</section>
+
+<!-- 72 NEXT STEPS -->
+<section class="slide">
+  <div class="kicker">Para onde ir agora</div>
+  <h2>Continue aprendendo</h2>
+  <div class="rule"></div>
+  <ul>
+    <li><strong>Nordic DevAcademy</strong> - nRF Connect SDK Fundamentals (grátis, no seu ritmo).</li>
+    <li><strong>Golioth</strong> - treinamento e getting started de conectividade/IoT.</li>
+    <li><strong>Memfault Interrupt</strong> - série "Practical Zephyr" (build, Kconfig, devicetree).</li>
+    <li><strong>Docs oficiais</strong> - Getting Started e a página da placa esp32c5_devkitc.</li>
+  </ul>
+</section>
+
+<!-- 73 THANKS -->
+<section class="slide title">
+  <div class="chip">Fim</div>
+  <h1>Obrigado!<br>Perguntas?</h1>
+  <p class="sub">Todo o material fica no repositório - clone, experimente e leve para casa.</p>
+  <p class="url"><b>https://sylvioalves.github.io/zephyr-workshop-2026/</b></p>
+</section>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const bar = document.getElementById('bar');
+  const counter = document.getElementById('counter');
+  let i = 0;
+
+  function show(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, k) => s.classList.toggle('active', k === i));
+    bar.style.width = ((i) / (slides.length - 1) * 100) + '%';
+    counter.textContent = (i + 1) + ' / ' + slides.length;
+    if (location.hash !== '#' + (i + 1)) history.replaceState(null, '', '#' + (i + 1));
+  }
+  function next() { show(i + 1); }
+  function prev() { show(i - 1); }
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', ' ', 'PageDown'].includes(e.key)) { e.preventDefault(); next(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); prev(); }
+    else if (e.key === 'Home') show(0);
+    else if (e.key === 'End') show(slides.length - 1);
+    else if (e.key === 'f') { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
+  });
+
+  // left click anywhere advances (ignore clicks on links/code)
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('a, pre, code')) return;
+    next();
+  });
+
+  // right click goes back; keep the native menu on links and code so a URL
+  // can still be copied
+  document.addEventListener('contextmenu', (e) => {
+    if (e.target.closest('a, pre, code')) return;
+    e.preventDefault();
+    prev();
+  });
+
+  const start = parseInt((location.hash || '#1').slice(1), 10);
+  show(isNaN(start) ? 0 : start - 1);
+</script>
+</body>
+</html>

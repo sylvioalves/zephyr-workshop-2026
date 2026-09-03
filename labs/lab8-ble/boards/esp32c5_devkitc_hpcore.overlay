@@ -1,0 +1,6 @@
+/* Enable the SoC die temperature sensor. Same three lines as Lab 2:
+ * the node exists in the SoC devicetree but ships disabled.
+ */
+&coretemp {
+	status = "okay";
+};

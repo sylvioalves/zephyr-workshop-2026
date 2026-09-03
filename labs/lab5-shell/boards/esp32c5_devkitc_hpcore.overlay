@@ -1,0 +1,7 @@
+/* Enable the SoC die temperature sensor. The node exists in the SoC
+ * devicetree but ships with status = "disabled", so nothing is built
+ * for it until we turn it on here.
+ */
+&coretemp {
+	status = "okay";
+};

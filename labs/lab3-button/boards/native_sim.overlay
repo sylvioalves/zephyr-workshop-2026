@@ -1,0 +1,22 @@
+/* native_sim variant: the C5 board already describes its boot button as
+ * sw0. native_sim has no button at all, so we declare one on the emulated
+ * GPIO controller and point the same sw0 alias at it. The application
+ * source is not touched.
+ */
+#include <zephyr/dt-bindings/gpio/gpio.h>
+
+/ {
+	aliases {
+		sw0 = &button0;
+	};
+
+	buttons {
+		compatible = "gpio-keys";
+
+		button0: button_0 {
+			gpios = <&gpio0 1 GPIO_ACTIVE_LOW>;
+			label = "User button";
+			zephyr,code = <11>;
+		};
+	};
+};

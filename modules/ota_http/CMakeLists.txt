@@ -1,0 +1,6 @@
+if(CONFIG_OTA_HTTP)
+  zephyr_library()
+  zephyr_library_sources(src/ota_http.c)
+  zephyr_library_sources_ifdef(CONFIG_OTA_HTTP_SHELL src/ota_http_shell.c)
+  zephyr_include_directories(include)
+endif()

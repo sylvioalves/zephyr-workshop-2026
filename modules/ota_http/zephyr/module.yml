@@ -1,0 +1,4 @@
+name: ota_http
+build:
+  cmake: .
+  kconfig: Kconfig

@@ -1,0 +1,9 @@
+/* Link this build to run in place from the secondary slot. Direct XIP boots
+ * the image where it sits, so the mapped IROM and DROM offsets have to point
+ * at slot 1 instead of slot 0.
+ */
+/ {
+	chosen {
+		zephyr,code-partition = &slot1_partition;
+	};
+};

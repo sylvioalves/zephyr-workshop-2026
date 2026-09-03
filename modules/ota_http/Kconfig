@@ -1,0 +1,92 @@
+menuconfig OTA_HTTP
+	bool "HTTP firmware update into the MCUboot secondary slot"
+	depends on BOOTLOADER_MCUBOOT
+	depends on NETWORKING
+	select HTTP_CLIENT
+	select HTTP_PARSER
+	select HTTP_PARSER_URL
+	select FLASH
+	select FLASH_MAP
+	select STREAM_FLASH
+	select IMG_MANAGER
+	select IMG_ERASE_PROGRESSIVELY
+	select REBOOT
+	help
+	  Download a firmware image over HTTP and write it straight into the
+	  slot MCUboot is not running from, then ask the bootloader to swap.
+
+	  Selects IMG_ERASE_PROGRESSIVELY, which is not optional here: without
+	  it the slot must already be erased, and writing over stale contents
+	  produces an image the bootloader silently rejects.
+
+if OTA_HTTP
+
+config OTA_HTTP_SHELL
+	bool "ota shell command"
+	depends on SHELL
+	default y
+	help
+	  Register an "ota" command with download, apply, confirm, status,
+	  erase and reboot subcommands.
+
+config OTA_HTTP_RECV_BUF_SIZE
+	int "HTTP receive buffer size"
+	default 2048
+	range 512 16384
+	help
+	  Holds the response headers plus one body chunk. Larger buffers mean
+	  fewer flash writes and a faster download.
+
+config OTA_HTTP_TIMEOUT_MS
+	int "HTTP request timeout in milliseconds"
+	default 60000
+	help
+	  Covers the whole transfer, not a single chunk. An image of a few
+	  hundred kilobytes over a slow link needs a generous value.
+
+config OTA_HTTP_CONFIRM_TIMEOUT_S
+	int "Seconds to confirm a test image before reverting"
+	default 0
+	help
+	  When an image boots on trial and nothing confirms it within this
+	  many seconds, the board reboots and MCUboot reverts to the previous
+	  image. This is what makes a hung update recover on its own: without
+	  it a firmware that never reaches ota_http_confirm() stays up forever
+	  in an unconfirmed state and is never rolled back.
+
+	  Set 0 to disable, which leaves confirmation entirely to the
+	  application. Requires swap mode; it does nothing when MCUboot was
+	  built overwrite-only.
+
+config OTA_HTTP_TLS
+	bool "Allow https URLs"
+	depends on NET_SOCKETS_SOCKOPT_TLS
+	help
+	  Adds TLS support. Register the CA certificate with
+	  ota_http_tls_add_ca() before the first https download, or add it
+	  yourself under OTA_HTTP_TLS_SEC_TAG with tls_credential_add().
+
+config OTA_HTTP_TLS_SEC_TAG
+	int "TLS security tag"
+	depends on OTA_HTTP_TLS
+	default 1
+	help
+	  Tag under which the CA certificate is registered.
+
+config OTA_HTTP_TLS_PEER_VERIFY
+	int "Peer verification level"
+	depends on OTA_HTTP_TLS
+	default 2
+	range 0 2
+	help
+	  0 disables verification, 1 makes it optional, 2 requires it.
+
+	  Leave at 2 for anything that ships. Lower values accept a server
+	  that cannot be authenticated, which means an attacker who can
+	  redirect the connection can install their own firmware.
+
+module = OTA_HTTP
+module-str = ota_http
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # OTA_HTTP
